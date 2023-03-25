@@ -21,9 +21,10 @@ app.use(
     })
 );
 
-state.createGlobalState(10,10);
-state.addNewRevision([{x: 0, y:0, color: "#FF0000"}]);
-state.addNewRevision([{x: 1, y:0, color: "#DD0000"}]);
+state.createGlobalState(10, 10);
+state.addNewRevision([{ x: 0, y: 0, color: "#FF0000" }], null);
+state.addNewRevision([{ x: 1, y: 0, color: "#DD0000" }, { x: 3, y: 2, color: "#212343" }], null);
+state.rollbackToRevision(1);
 
 app.use('/api', api_routes);
 app.use('/ws', ws_routes);
