@@ -1,0 +1,11 @@
+.container {
+    min-height: 100vh;
+    min-width: 40%;
+    display: flex;
+}
+
+.image {
+    min-width: 60%;
+    min-height: 100vh;
+    background-color: aquamarine;
+}

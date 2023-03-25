@@ -1,0 +1,18 @@
+<div class="editor-container">
+  <div class="header">
+    <button>run</button>
+    <button>submit</button>
+  </div>
+  <div class="text-container">
+    <ngx-codemirror [(ngModel)]="content" [options]="{
+      lineNumbers: true,
+      theme: 'monokai',
+      lineNumberFormatter: lineFormatter
+    }">
+    </ngx-codemirror>
+  </div>
+  <div class="footer" [@outAnimation] *ngIf="showError">
+    <a id="close" (click)="closeErrorMessage()">v</a>
+    <pre id="error-text">{{ errorMessage }}</pre>
+  </div>
+</div>

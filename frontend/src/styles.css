@@ -1,0 +1,7 @@
+@import '~codemirror/lib/codemirror';
+@import '~codemirror/theme/monokai';
+
+* {
+    margin: 0;
+    padding: 0;
+}
