@@ -11,6 +11,9 @@ chumsky = "1.0.0-alpha.3"
 clap = { version = "4.1.6", features = ["derive"] }
 # Binary error handling
 color-eyre = "0.6.2"
+# Random number generation
+getrandom = { version = "0.2.8", features = ["js"] }
+rand = { version = "0.8.5", features = ["getrandom"] }
 # Colored strings
 owo-colors = "3.5.0"
 # Library error types
