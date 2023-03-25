@@ -6,7 +6,9 @@ import { trigger, state, style, animate, transition } from '@angular/animations'
   templateUrl: './editor.component.html',
   styleUrls: ['./editor.component.css'],
   animations: [
-    trigger('outAnimation', [transition(':leave', [animate('0.75s ease-in', style({ height: 0, opacity: 0 }))])])
+    trigger('outAnimation', [
+      transition(':leave', [animate('0.75s ease-in', style({ height: 0, opacity: 0 }))])
+    ])
   ]
 })
 export class EditorComponent {
@@ -29,8 +31,21 @@ repeat sides:
     return `${line} | `;
   }
 
+  submitClicked() {
+
+  }
+
+  runClicked() {
+    this.raiseError(this.content);
+  }
+
   closeErrorMessage() {
     this.showError = false;
     this.errorMessage = "";
+  }
+
+  raiseError(errorMessage: string) {
+    this.showError = true;
+    this.errorMessage = errorMessage;
   }
 }

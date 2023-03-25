@@ -1,7 +1,7 @@
 <div class="editor-container">
   <div class="header">
-    <button>run</button>
-    <button>submit</button>
+    <button (click)="runClicked()">run</button>
+    <button (click)="submitClicked()">submit</button>
   </div>
   <div class="text-container">
     <ngx-codemirror [(ngModel)]="content" [options]="{
