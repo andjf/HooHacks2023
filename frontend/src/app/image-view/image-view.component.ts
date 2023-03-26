@@ -171,12 +171,14 @@ export class ImageViewComponent implements OnInit, OnDestroy {
 
       // If the mouse is "focused" on the canvas
       if ((p.mouseX > 0 && p.mouseX < p.width) && (p.mouseY > 0 && p.mouseY < p.height)) {
-        if (p.key === ' ') {
+        // Backslash resetst the position
+        if (p.key === '\\') {
           centerX = Math.floor(image.width / 2);
           centerY = Math.floor(image.height / 2);
           zoomLevel = DEFAULT_ZOOM_LEVEL;
         }
 
+        // Zoom "+" and "-" buttons
         if (p.key === '-') {
           zoomLevel = Math.max(1, zoomLevel - 5);
         } else if (p.key === "=") {
