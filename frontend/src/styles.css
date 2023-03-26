@@ -1,7 +1,9 @@
 @import '~codemirror/lib/codemirror';
 @import '~codemirror/theme/mdn-like';
 
+
 * {
+    font-family: 'VT323', monospace;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -76,7 +78,7 @@ app-image-view {
    border: 0;
    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
    cursor: pointer;
-   font-size: 1.2rem;
+   font-size: 1.4rem;
 }
 
 .header > button:hover {
@@ -85,7 +87,7 @@ app-image-view {
 
 .CodeMirror {
     height: 90%;
-    font-size: 1.2rem;
+    font-size: 1.6rem;
 }
 
 .cm-s-mdn-like.CodeMirror {
@@ -128,7 +130,7 @@ app-image-view {
     position: relative;
     bottom: 35%;
     left: 10%;
-    height: 30%;
+    height: 32%;
     width: 80%;
     background-color: #0e121e;
     padding: 1%;
@@ -136,16 +138,14 @@ app-image-view {
 }
 
 #error-text {
-    padding-top: 0.4rem;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 1rem;
+    padding-top: 1rem;
+    font-size: 1.2rem;
     color: white;
     overflow-x: scroll;
     overflow-y: scroll;
 }
 
 #close {
-    font-family: 'Courier New', Courier, monospace;
     color: #F56476;
     position: absolute;
     top: 2px;
@@ -155,29 +155,17 @@ app-image-view {
     border-radius: 5px;
 }
 
+#change-scope-button {
+   background-color: #B3CB8D;
+   padding: 0.5rem 1rem;
+   border: 0;
+   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+   cursor: pointer;
+   font-size: 1.2rem;
+   display: flex;
+   justify-content: center;
+}
 
-/* .footer { */
-/*     width: calc(40vw - 50px); */
-/*     padding: 25px; */
-/*     background-color: #353739; */
-/*     border-radius: 10px 10px 0px 0px; */
-/* } */
-/**/
-/* #error-text { */
-/*     font-family: 'Courier New', Courier, monospace; */
-/*     color: white; */
-/*     overflow-x: scroll; */
-/*     scrollbar-width: none; */
-/* } */
-/**/
-/* #close { */
-/*     font-family: 'Courier New', Courier, monospace; */
-/*     color: white; */
-/*     position: absolute; */
-/*     right: 25px; */
-/*     bottom: 1rem; */
-/*     cursor: pointer; */
-/*     padding: 0px 5px; */
-/*     background-color: #00000050; */
-/*     border-radius: 5px; */
-/* } */
+#change-scope-button:hover {
+    background-color: #AABD8C;
+}
