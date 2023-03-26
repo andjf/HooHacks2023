@@ -71,6 +71,11 @@ pub enum Instruction {
         instructions: Vec<Instruction>,
     },
 
+    Begin {
+        x: Constant,
+        y: Constant,
+    },
+
     Empty,
 }
 

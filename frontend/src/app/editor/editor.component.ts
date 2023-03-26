@@ -12,7 +12,7 @@ import { Doc, TextMarker } from 'codemirror';
   styleUrls: ['./editor.component.css'],
   animations: [
     trigger('outAnimation', [
-      transition(':leave', [animate('0.5s ease-in', style({ height: 0, opacity: 0 }))])
+      transition(':leave', [animate('0.150s ease-in', style({ height: 0, opacity: 0 }))])
     ])
   ]
 })
