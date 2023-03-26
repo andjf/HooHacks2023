@@ -57,7 +57,6 @@ router.ws("/", (ws, req) => {
                 formatAndSend(ws, "success", "");
                 break;
             case ("post_update"):
-                console.log(data)
                 state.addNewRevision(data, null);
                 formatAndSend(ws, "success", "");
                 state
