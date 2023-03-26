@@ -78,6 +78,14 @@ pub fn convert_ansi_to_html(input: &str) -> String {
                 49 => add!(colors, "ansi-bg-default"),
                 _ => unreachable!(),
             }
+        } else if c == '&' {
+            current_span.push_str("&amp;");
+        } else if c == '<' {
+            current_span.push_str("&lt;");
+        } else if c == '>' {
+            current_span.push_str("&gt;");
+        } else if c == '"' {
+            current_span.push_str("&quot;");
         } else {
             current_span.push(c);
         }
