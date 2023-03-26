@@ -202,22 +202,24 @@ impl Interpreter {
                 }
                 return Ok(ticks);
             }
-            Instruction::Empty => (),
+            Instruction::Empty => return Ok(Vec::new()),
         }
 
         if self.pos == old_pos && !color_changed && modified.is_empty() {
-            self.current_inst += 1;
-            Ok(vec![Tick::Tick {
+            let tick = vec![Tick::Tick {
                 line: self.current_inst,
-            }])
-        } else {
+            }];
             self.current_inst += 1;
-            Ok(vec![Tick::Changed {
+            Ok(tick)
+        } else {
+            let tick = vec![Tick::Changed {
                 line: self.current_inst,
                 position: self.pos,
                 color: self.current_color.clone(),
                 modified,
-            }])
+            }];
+            self.current_inst += 1;
+            Ok(tick)
         }
     }
 }
