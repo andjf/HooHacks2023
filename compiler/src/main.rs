@@ -27,7 +27,7 @@ fn main() -> Result<()> {
         color_eyre::eyre::eyre!(err_message)
     })?;
 
-    let mut interpreter = Interpreter::new(start_position);
+    let mut interpreter = Interpreter::new(start_position, 1000, 1000);
     let ticks = interpreter.run(instructions);
     tracing::info!("Ticks: {ticks:#?}");
 

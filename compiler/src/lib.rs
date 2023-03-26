@@ -98,7 +98,12 @@ pub enum Tick {
 }
 
 #[wasm_bindgen]
-pub fn compile_and_execute(mut code: String, start_position: JsValue) -> Result<JsValue, JsValue> {
+pub fn compile_and_execute(
+    mut code: String,
+    start_position: JsValue,
+    width: i16,
+    height: i16,
+) -> Result<JsValue, JsValue> {
     // Hacky workaround for parser enforcing trailing newlines
     code.push('\n');
 
@@ -117,7 +122,7 @@ pub fn compile_and_execute(mut code: String, start_position: JsValue) -> Result<
         ansi::convert_ansi_to_html(&err_message)
     })?;
 
-    let mut interpreter = Interpreter::new(start_position);
+    let mut interpreter = Interpreter::new(start_position, width, height);
     let ticks = interpreter.run(instructions);
     Ok(serde_wasm_bindgen::to_value(&ticks)?)
 }
