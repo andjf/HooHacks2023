@@ -127,9 +127,9 @@ app-image-view {
 .footer {
     position: relative;
     bottom: 35%;
-    left: 12%;
-    max-height: 12%;
-    max-width: 28%;
+    left: 10%;
+    height: 30%;
+    width: 80%;
     background-color: #0e121e;
     padding: 1%;
     overflow-y: scroll;
