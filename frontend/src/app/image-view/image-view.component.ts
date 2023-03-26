@@ -86,9 +86,9 @@ export class ImageViewComponent implements OnInit, OnDestroy, DoCheck {
         const expanded_color = color.length === 3 ? color.charAt(0) + color.charAt(0) + color.charAt(1) + color.charAt(1) + color.charAt(2) + color.charAt(2) : color;
         let value = parseInt(expanded_color, 16);
         let pos = (y * local_image.width + x) * 4;
-        local_image.pixels[pos + 0] = value & 0xFF0000; // r
-        local_image.pixels[pos + 1] = value & 0x00FF00; // g
-        local_image.pixels[pos + 2] = value & 0x0000FF; // b
+        local_image.pixels[pos + 0] = (value >> 16) & 0xFF; // r
+        local_image.pixels[pos + 1] = (value >> 8) & 0xFF; // g
+        local_image.pixels[pos + 2] = value & 0xFF; // b
         local_image.pixels[pos + 3] = 255; // a
         moves.shift();
       }
@@ -126,9 +126,9 @@ export class ImageViewComponent implements OnInit, OnDestroy, DoCheck {
         for (let y = 0; y < H; y++) {
           for (let x = 0; x < W; x++) {
             let color = data.state[y][x];
-            global_image.pixels[pos + 0] = (color & 0xFF0000); // r
-            global_image.pixels[pos + 1] = (color & 0x00FF00); // g
-            global_image.pixels[pos + 2] = (color & 0x0000FF); // b
+            global_image.pixels[pos + 0] = (color >> 16) & 0xFF; // r
+            global_image.pixels[pos + 1] = (color >> 8) & 0xFF; // g
+            global_image.pixels[pos + 2] = color & 0xFF; // b
             global_image.pixels[pos + 3] = 255; // a
             pos += 4;
           }
