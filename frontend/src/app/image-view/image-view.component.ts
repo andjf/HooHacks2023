@@ -38,7 +38,7 @@ export class ImageViewComponent implements OnInit, OnDestroy {
     let image: p5.Image;
     let centerX: number;
     let centerY: number;
-    let zoomLevel: number = 50;
+    let zoomLevel: number = 20;
 
     let upPressed: boolean;
     let downPressed: boolean;
@@ -71,19 +71,10 @@ export class ImageViewComponent implements OnInit, OnDestroy {
           image.pixels[pos + 3] = 255; // a
         }
       }
-      for (let y = H * 4 - 4; y < H * 4; y++) {
-        for (let x = 0; x < W * 4; x++) {
-          let pos = (y * W + x) * 4;
-          image.pixels[pos + 0] = 255;
-          image.pixels[pos + 1] = 0;
-          image.pixels[pos + 2] = 0;
-          image.pixels[pos + 3] = 255;
-        }
-      }
       image.updatePixels();
 
       centerX = Math.floor(W / 2);
-      centerY = Math.floor(H / 2);
+      centerY = H;
 
       p.noSmooth();
     };
@@ -141,4 +132,3 @@ export class ImageViewComponent implements OnInit, OnDestroy {
     };
   }
 }
-0
