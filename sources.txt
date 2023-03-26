@@ -3,3 +3,5 @@ https://www.nodejs.org/dist/v11.13.0/docs/api/events.html
 https://www.npmjs.com/package/cors
 https://www.npmjs.com/package/express-ws
 https://www.npmjs.com/package/glob
+https://www.redblobgames.com/grids/line-drawing.html
+https://stackoverflow.com/questions/57131714/create-zoom-effect-with-p5-js
