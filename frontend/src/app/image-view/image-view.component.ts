@@ -8,7 +8,6 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 })
 export class ImageViewComponent implements OnInit, OnDestroy {
 
-  private toggle = true;
   private p5: any;
 
   constructor() {
@@ -40,24 +39,103 @@ export class ImageViewComponent implements OnInit, OnDestroy {
     this.p5.noCanvas();
   }
 
-  private setup(p: any) {
+  private drawing = function (p: p5) {
+    let image: p5.Graphics;
+    let centerX: number;
+    let centerY: number;
+    let zoomLevel: number = 50;
 
-  }
+    let displayImage: p5.Graphics;
 
-  private drawing = function (p: any) {
     p.setup = () => {
-      console.log(p);
       const parent = document.getElementById('p5-target');
-      if (parent) {
-        const rect: DOMRect = parent.getBoundingClientRect();
-        console.log(rect.width, rect.height)
-        p.createCanvas(rect.width, rect.height).parent('p5-target');
+      if (!parent)
+        return
+
+      const rect: DOMRect = parent.getBoundingClientRect();
+      const W = Math.floor(rect.width);
+      const H = Math.floor(rect.height);
+      p.createCanvas(W, H).parent('p5-target');
+
+      image = p.createGraphics(W, H);
+      image.loadPixels();
+      for (let y = 0; y < H * 4; y++) {
+        for (let x = 0; x < W * 4; x++) {
+          image.pixels[(y * W + x) * 4 + 0] = p.random(256); // r
+          image.pixels[(y * W + x) * 4 + 1] = p.random(256); // g
+          image.pixels[(y * W + x) * 4 + 2] = p.random(256); // b
+          image.pixels[(y * W + x) * 4 + 3] = 255; // a
+        }
       }
+      image.updatePixels();
+
+      displayImage = p.createGraphics(Math.floor(W / zoomLevel), Math.floor(H / zoomLevel));
+
+      centerX = Math.floor(W / 2);
+      // centerX = 0;
+      // centerX = W - displayImage.width;
+
+      centerY = Math.floor(H / 2);
+      // centerY = 0;
+      // centerY = H - displayImage.height;
+
+      displayImage.loadPixels();
+      for (let dy = 0, y = centerY; dy < displayImage.height; dy++, y++) {
+        for (let dx = 0, x = centerX; dx < displayImage.width; dx++, x++) {
+          displayImage.set(dx, dy, image.get(x, y));
+        }
+      }
+      displayImage.updatePixels();
+
+      p.noSmooth();
     };
 
     p.draw = () => {
       p.background(0);
+      p.image(displayImage, 0, 0, p.width, p.height);
     };
 
+    p.mousePressed = () => {
+      if (p.mouseButton == p.RIGHT) {
+        zoomLevel = Math.min(80, zoomLevel + 10);
+      } else if (p.mouseButton == p.LEFT) {
+        zoomLevel = Math.max(10, zoomLevel - 10);
+      }
+      displayImage = p.createGraphics(Math.floor(image.width / zoomLevel), Math.floor(image.height / zoomLevel));
+      displayImage.loadPixels();
+      for (let dy = 0, y = centerY; dy < displayImage.height; dy++, y++) {
+        for (let dx = 0, x = centerX; dx < displayImage.width; dx++, x++) {
+          displayImage.set(dx, dy, image.get(x, y));
+        }
+      }
+      displayImage.updatePixels();
+    }
+
+    p.keyPressed = () => {
+      let changed = false;
+      if (p.key === 'w' && centerY > 0) {
+        centerY--;
+        changed = true;
+      } else if (p.key === 's' && centerY + displayImage.height < image.height) {
+        centerY++;
+        changed = true;
+      } else if (p.key === 'd' && centerX + displayImage.width < image.width) {
+        centerX++;
+        changed = true;
+      } else if (p.key === 'a' && centerX > 0) {
+        centerX--;
+        changed = true;
+      }
+
+      if (changed) {
+        displayImage.loadPixels();
+        for (let dy = 0, y = centerY; dy < displayImage.height; dy++, y++) {
+          for (let dx = 0, x = centerX; dx < displayImage.width; dx++, x++) {
+            displayImage.set(dx, dy, image.get(x, y));
+          }
+        }
+        displayImage.updatePixels();
+      }
+    };
   }
 }
