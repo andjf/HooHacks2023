@@ -9,8 +9,8 @@ license = "MIT OR Apache-2.0"
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-ariadne = "0.2.0"
-chumsky = "1.0.0-alpha.3"
+ariadne = { path = "./include/ariadne" }
+chumsky = { version = "1.0.0-alpha.3", features = ["label"] }
 # Argument parser
 clap = { version = "4.1.6", features = ["derive"] }
 # Binary error handling

@@ -3,6 +3,7 @@ use chumsky::Parser;
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
+pub mod ansi;
 mod interpreter;
 mod line;
 mod parser;
@@ -97,7 +98,10 @@ pub enum Tick {
 }
 
 #[wasm_bindgen]
-pub fn compile_and_execute(code: String, start_position: JsValue) -> Result<JsValue, JsValue> {
+pub fn compile_and_execute(mut code: String, start_position: JsValue) -> Result<JsValue, JsValue> {
+    // Hacky workaround for parser enforcing trailing newlines
+    code.push('\n');
+
     let start_position: Position = serde_wasm_bindgen::from_value(start_position)?;
     let instructions = parser().parse(&code).into_result().map_err(|errs| {
         let mut err_message = Vec::new();
@@ -110,7 +114,7 @@ pub fn compile_and_execute(code: String, start_position: JsValue) -> Result<JsVa
                 .unwrap();
         });
         let err_message = String::from_utf8_lossy(&err_message).to_string();
-        err_message
+        ansi::convert_ansi_to_html(&err_message)
     })?;
 
     let mut interpreter = Interpreter::new(start_position);

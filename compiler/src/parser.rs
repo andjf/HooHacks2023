@@ -4,7 +4,9 @@ use crate::{Constant, Instruction, Value, Variable};
 
 pub fn parser<'input>(
 ) -> impl Parser<'input, &'input str, Vec<Instruction>, extra::Err<Rich<'input, char>>> {
-    let variable = text::ident().map(|s: &str| Variable(s.to_string()));
+    let variable = text::ident()
+        .labelled("variable")
+        .map(|s: &str| Variable(s.to_string()));
     let negative_integer = just("-")
         .then(text::int(10))
         .slice()
@@ -16,8 +18,11 @@ pub fn parser<'input>(
         s.parse()
             .map_err(|e| Rich::custom(span, format!("Invalid positive constant: {e}")))
     });
-    let constant = choice((negative_integer, positive_integer)).map(Constant);
-    let value = choice((variable.map(Value::Variable), constant.map(Value::Constant)));
+    let constant = choice((negative_integer, positive_integer))
+        .labelled("integer")
+        .map(Constant);
+    let value = choice((variable.map(Value::Variable), constant.map(Value::Constant)))
+        .labelled("variable or constant");
 
     macro_rules! movement {
         ($op: literal, $variant:ident) => {
@@ -68,10 +73,12 @@ pub fn parser<'input>(
         .map(|((var, start), end)| Instruction::Random { var, start, end });
 
     let hex = any().filter(char::is_ascii_hexdigit).repeated();
-    let color_hex = just("#").ignore_then(choice((
-        hex.exactly(6).collect::<String>(),
-        hex.exactly(3).collect::<String>(),
-    )));
+    let color_hex = just("#")
+        .ignore_then(choice((
+            hex.exactly(6).collect::<String>(),
+            hex.exactly(3).collect::<String>(),
+        )))
+        .labelled("hexadecimal color");
     let color = just("color")
         .ignore_then(text::inline_whitespace())
         .ignore_then(color_hex)
@@ -86,7 +93,8 @@ pub fn parser<'input>(
         forward, backward, left, right, turn, pendown, penup, add, sub, mul, div, set, random,
         color,
     ))
-    .then_ignore(text::newline());
+    .then_ignore(text::newline())
+    .labelled("instruction");
 
     let block = recursive(|block| {
         let indent = just(' ')
