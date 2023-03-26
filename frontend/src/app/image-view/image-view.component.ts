@@ -99,6 +99,17 @@ export class ImageViewComponent implements OnInit, OnDestroy {
       centerY = 0;
 
       p.noSmooth();
+
+      const socket = new WebSocket("ws://localhost:3000/ws/notification");
+
+      socket.addEventListener("open", (event) => {
+        socket.send("Hello Server!");
+      });
+
+      socket.addEventListener("message", (event) => {
+        getState();
+        console.log("Message from server ", event.data);
+      });
     };
 
     p.draw = () => {
