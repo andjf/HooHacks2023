@@ -10,13 +10,9 @@ export class ImageViewComponent implements OnInit, OnDestroy {
 
   private p5: any;
 
-  @Input() width?: number;
-  @Input() height?: number;
   @Input() socket?: WebSocket;
 
-  constructor() {
-    console.log('Analog-constructed');
-  }
+  useGlobalImage: boolean = true;
 
   ngOnInit() {
     console.log('image-view init');
@@ -41,6 +37,7 @@ export class ImageViewComponent implements OnInit, OnDestroy {
 
   drawing(p: p5) {
     let image: p5.Image;
+    let localImage: p5.Image;
     let centerX: number;
     let centerY: number;
 
@@ -111,8 +108,7 @@ export class ImageViewComponent implements OnInit, OnDestroy {
       renderer.parent('p5-target');
 
       image = p.createImage(1000, 1000);
-
-      // getState();
+      localImage = p.createImage(1000, 1000);
 
       centerX = Math.floor(W / 2);
       centerY = Math.floor(H / 2);
@@ -143,7 +139,7 @@ export class ImageViewComponent implements OnInit, OnDestroy {
       }
 
       p.background(0);
-      p.image(image, 0, 0, p.width, p.height, centerX - destWidth, centerY - destHeight, destWidth, destHeight);
+      p.image(this.useGlobalImage ? image : localImage, 0, 0, p.width, p.height, centerX - destWidth, centerY - destHeight, destWidth, destHeight);
     };
 
     p.keyReleased = () => {
