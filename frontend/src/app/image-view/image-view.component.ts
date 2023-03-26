@@ -50,10 +50,9 @@ export class ImageViewComponent implements OnInit, OnDestroy {
 
     const getState = () => {
       p.httpGet("http://localhost:3000/api/state", "json", false, (resp) => {
-        console.log(resp);
+        console.log("Displaying new state");
         const W = resp.state.width;
         const H = resp.state.height;
-        console.log(H, W);
 
         image.loadPixels();
 
@@ -103,12 +102,12 @@ export class ImageViewComponent implements OnInit, OnDestroy {
       const socket = new WebSocket("ws://localhost:3000/ws/notification");
 
       socket.addEventListener("open", (event) => {
-        socket.send("Hello Server!");
+        console.log("Connection established");
       });
 
       socket.addEventListener("message", (event) => {
         getState();
-        console.log("Message from server ", event.data);
+        console.log("Server says: ", event.data);
       });
     };
 
