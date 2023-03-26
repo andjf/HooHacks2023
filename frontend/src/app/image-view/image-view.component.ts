@@ -92,8 +92,11 @@ export class ImageViewComponent implements OnInit, OnDestroy {
 
       getState();
 
-      centerX = Math.floor(W / 2);
-      centerY = H;
+      //centerX = Math.floor(W / 2);
+      //centerY = Math.floor(H/2);
+
+      centerX = 0;
+      centerY = 0;
 
       p.noSmooth();
     };
@@ -102,14 +105,16 @@ export class ImageViewComponent implements OnInit, OnDestroy {
       let destWidth = p.width / (zoomLevel * 2);
       let destHeight = p.height / (zoomLevel * 2);
 
+      let panRate = 1.0;
+
       if (upPressed)
-        centerY -= 0.5;
+        centerY -= panRate;
       if (downPressed)
-        centerY += 0.5;
+        centerY += panRate;
       if (leftPressed)
-        centerX -= 0.5;
+        centerX -= panRate;
       if (rightPressed)
-        centerX += 0.5;
+        centerX += panRate;
 
       p.background(0);
       p.image(image, 0, 0, p.width, p.height, centerX - destWidth, centerY - destHeight, destWidth, destHeight);
@@ -139,7 +144,7 @@ export class ImageViewComponent implements OnInit, OnDestroy {
       }
 
       if (p.key === '-') {
-        zoomLevel = Math.max(5, zoomLevel - 10);
+        zoomLevel = Math.max(1, zoomLevel - 10);
       } else if (p.key === "=") {
         zoomLevel = Math.min(80, zoomLevel + 10);
       }
