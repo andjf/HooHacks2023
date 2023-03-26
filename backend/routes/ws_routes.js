@@ -34,7 +34,7 @@ router.ws("/", (ws, req) => {
 
         let message = json.message;
         let data = json.data;
-        console.log(message, data)
+        console.log(message)
 
         if (message === undefined) {
             console.warn("Received text is missing a message field. Not processing.");
