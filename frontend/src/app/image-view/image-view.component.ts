@@ -10,12 +10,7 @@ export class ImageViewComponent implements OnInit, OnDestroy {
 
   private p5: any;
 
-  @Input() width?: number;
-  @Input() height?: number;
-
-  constructor() {
-    console.log('Analog-constructed');
-  }
+  @Input() socket?: WebSocket;
 
   ngOnInit() {
     console.log('image-view init');

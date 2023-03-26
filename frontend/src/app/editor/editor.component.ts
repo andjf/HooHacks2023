@@ -31,8 +31,7 @@ repeat sides:
   turn turn_amount
 `;
 
-  @Input() width?: number;
-  @Input() height?: number;
+  @Input() socket?: WebSocket;
 
   private rust?: typeof Module;
 
@@ -94,7 +93,7 @@ repeat sides:
       if (doc) {
         // Clear markers
         this.marker?.clear();
-        this.marker = doc.markText({line: this.lineHighlight, ch: 0}, {line: this.lineHighlight, ch: 100}, {
+        this.marker = doc.markText({ line: this.lineHighlight, ch: 0 }, { line: this.lineHighlight, ch: 100 }, {
           className: "current-inst",
         });
       }
