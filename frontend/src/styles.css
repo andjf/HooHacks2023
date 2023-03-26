@@ -1,9 +1,10 @@
 @import '~codemirror/lib/codemirror';
-@import '~codemirror/theme/monokai';
+@import '~codemirror/theme/mdn-like';
 
 * {
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 .ansi-black {
@@ -22,51 +23,81 @@
     color: #b467ea;
 }
 
-html {
+html, body {
+    height: 100%;
+    background-color: #E9E3B4;
+    overflow: hidden;
+}
+
+app-root {
+  display: flex;
+  flex-flow: row;
+  gap: 1rem;
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+}
+
+app-editor {
+    flex-basis: 40%;
+    flex-grow: 1;
     height: 100%;
 }
 
-body {
-    min-height: 100%;
-    background-color: antiquewhite;
-    padding: 2rem;
+app-image-view {
+    flex-basis: 60%;
+    flex-grow: 2;
+}
+
+#p5-target {
+    width: 100%;
+    height: 100%;
 }
 
 .current-inst {
     background-color: red !important;
 }
 
-:host()::ng-deep .CodeMirror {
-    min-height: 100%;
-    font-size: 18px;
-}
-
-.container {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  height: 100%;
-}
-
-app-root {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
-app-editor {
-  display: block;
-  width: 40%;
-  height: 100%;
-}
-
-app-image-view {
-  display: block;
-  width: 60%;
-  max-height: 100vw;
-}
-
-#p5-target {
-    width: 100%;
+.editor-container {
     height: 100%;
+}
+
+.header {
+    height: 10%;
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+}
+
+.header > button {
+   width: 100%;
+   margin-bottom: 1rem;
+   background-color: #B3CB8D;
+   border: 0;
+   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+   cursor: pointer;
+   font-size: 1.2rem;
+}
+
+.header > button:hover {
+    background-color: #AABD8C;
+}
+
+.CodeMirror {
+    height: 90%;
+    font-size: 1.2rem;
+    padding-left: 1rem;
+    padding-top: 1rem;
+}
+
+.cm-s-mdn-like.CodeMirror {
+    color: #001418 !important;
+}
+
+.cm-s-mdn-like div.CodeMirror-selected {
+    background-color: #C9E59B80 !important;
+}
+
+.cm-s-mdn-like .CodeMirror-gutters {
+    border-left: 6px solid rgba(0,83,159,0.75);
 }

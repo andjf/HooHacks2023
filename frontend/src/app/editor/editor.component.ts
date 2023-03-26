@@ -53,7 +53,7 @@ repeat sides:
   updates: Set<any> = new Set();
 
   lineFormatter(line: string): string {
-    return `${line} | `;
+    return `${line} `;
   }
 
   submitClicked() {
