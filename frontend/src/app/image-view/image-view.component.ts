@@ -10,13 +10,9 @@ export class ImageViewComponent implements OnInit, OnDestroy {
 
   private p5: any;
 
-  @Input() width?: number;
-  @Input() height?: number;
   @Input() socket?: WebSocket;
 
-  constructor() {
-    console.log('Analog-constructed');
-  }
+  useGlobalImage: boolean = true;
 
   ngOnInit() {
     console.log('image-view init');
@@ -41,8 +37,14 @@ export class ImageViewComponent implements OnInit, OnDestroy {
 
   drawing(p: p5) {
     let image: p5.Image;
+<<<<<<< HEAD
     let translateX: number;
     let translateY: number;
+=======
+    let localImage: p5.Image;
+    let centerX: number;
+    let centerY: number;
+>>>>>>> e3a46ac50aeb22ca20ca909dd85ae026ec3124da
 
     const DEFAULT_ZOOM_LEVEL: number = 1;
     let zoomLevel: number = DEFAULT_ZOOM_LEVEL;
