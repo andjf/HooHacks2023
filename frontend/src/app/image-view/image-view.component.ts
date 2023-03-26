@@ -39,11 +39,14 @@ export class ImageViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   ngDoCheck() {
-    this.p5.executeMoves(this.currentLocalMoves);
+    let copy = this.currentLocalMoves.slice();
+    this.currentLocalMoves = [];
+    this.p5.executeMoves(copy);
   }
 
   drawing(p: p5) {
-    let image: p5.Image;
+    let global_image: p5.Image;
+    let local_image: p5.Image;
 
     let scale = 1;
     let translateX: number = 0;
@@ -64,16 +67,21 @@ export class ImageViewComponent implements OnInit, OnDestroy, DoCheck {
     let leftPressed: boolean;
     let rightPressed: boolean;
 
+    let useGlobalImage = true;
+    // @ts-ignore
+    p5.prototype.setUseGlobalImage = function (ugi: boolean) {
+        useGlobalImage = ugi;
+    }
 
     // @ts-ignore
     p5.prototype.executeMoves = function (moves: Move[]) {
-      if (!image)
+      if (!local_image)
         return;
-      image.loadPixels();
+      local_image.loadPixels();
       for (let { x, y, color } of moves) {
-        image.set(x, y, p.color(color));
+        local_image.set(x, y, p.color(color));
       }
-      image.updatePixels();
+      local_image.updatePixels();
     }
 
     // @ts-ignore
@@ -89,21 +97,21 @@ export class ImageViewComponent implements OnInit, OnDestroy, DoCheck {
         const H = data.height;
         console.log(H, W);
 
-        image.loadPixels();
+        global_image.loadPixels();
 
         let pos = 0;
         for (let y = 0; y < H; y++) {
           for (let x = 0; x < W; x++) {
             let color = data.state[y][x];
-            image.pixels[pos + 0] = (color & 0xFF0000); // r
-            image.pixels[pos + 1] = (color & 0x00FF00); // g
-            image.pixels[pos + 2] = (color & 0x0000FF); // b
-            image.pixels[pos + 3] = 255; // a
+            global_image.pixels[pos + 0] = (color & 0xFF0000); // r
+            global_image.pixels[pos + 1] = (color & 0x00FF00); // g
+            global_image.pixels[pos + 2] = (color & 0x0000FF); // b
+            global_image.pixels[pos + 3] = 255; // a
             pos += 4;
           }
         }
 
-        image.updatePixels();
+        global_image.updatePixels();
       });
 
       socket.addEventListener("open", () => {
@@ -137,8 +145,8 @@ export class ImageViewComponent implements OnInit, OnDestroy, DoCheck {
         }
       });
 
-
-      image = p.createImage(1000, 1000);
+      global_image = p.createImage(1000, 1000);
+      local_image = p.createImage(1000, 1000);
       p.noSmooth();
     };
 
@@ -166,7 +174,11 @@ export class ImageViewComponent implements OnInit, OnDestroy, DoCheck {
       p.scale(scale);
 
       p.background(0);
-      p.image(image, 0, 0, image.width, image.height);
+      if (useGlobalImage) {
+        p.image(global_image, 0, 0, global_image.width, global_image.height);
+      } else {
+        p.image(local_image, 0, 0, local_image.width, local_image.height);
+      }
     };
 
     p.keyReleased = () => {
