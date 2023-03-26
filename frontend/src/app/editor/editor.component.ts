@@ -25,7 +25,7 @@ set side_length 15
 
 div turn_amount sides
 
-pendown
+pen_down
 repeat sides:
   forward side_length
   turn turn_amount
