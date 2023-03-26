@@ -1,10 +1,11 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { trigger, style, animate, transition } from '@angular/animations';
 
 import * as Module from '../../assets/pkg/compiler';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
 import { Doc, TextMarker } from 'codemirror';
+import { Move } from './Move';
 
 @Component({
   selector: 'app-editor',
@@ -32,6 +33,8 @@ repeat sides:
 `;
 
   @Input() socket?: WebSocket;
+
+  @Output() moveEvent = new EventEmitter<Move>();
 
   private rust?: typeof Module;
 
@@ -66,7 +69,7 @@ repeat sides:
       data.push(val);
     });
     console.log(data);
-    this.socket?.send(JSON.stringify({message: "post_update", data: data}));
+    this.socket?.send(JSON.stringify({ message: "post_update", data: data }));
 
     this.updates = new Set();
   }
@@ -75,7 +78,7 @@ repeat sides:
     try {
       this.closeErrorMessage();
       this.showRun = false;
-      this.ticks = this.rust?.compile_and_execute(this.content, { x: 500, y: 500 }, 1000, 1000);
+      this.ticks = this.rust?.compile_and_execute(this.content, { x: 50, y: 50 }, 1000, 1000);
       this.tickIndex = 0;
       this.showRun = true;
       this.step();
@@ -84,7 +87,6 @@ repeat sides:
       this.raiseError(error.toString());
     }
   }
-
 
   step() {
     if (this.tickIndex >= this.ticks.length) {
@@ -95,10 +97,10 @@ repeat sides:
     let tick = this.ticks[this.tickIndex];
 
     this.lineHighlight = tick.Tick?.line;
-    if (this.lineHighlight === null || this.lineHighlight === undefined)  {
+    if (this.lineHighlight === null || this.lineHighlight === undefined) {
       this.lineHighlight = tick.Changed?.line;
     }
-    if (this.lineHighlight === null || this.lineHighlight === undefined)  {
+    if (this.lineHighlight === null || this.lineHighlight === undefined) {
       this.lineHighlight = tick.Invalid?.line;
     }
 
@@ -120,7 +122,8 @@ repeat sides:
     }
     else if (tick.Changed) {
       for (let p of tick.Changed.modified) {
-        this.updates.add({"x": p.x, "y": p.y, "color": parseInt(tick.Changed.color.substring(1), 16)});
+        this.updates.add({ "x": p.x, "y": p.y, "color": parseInt(tick.Changed.color.substring(1), 16) });
+        this.moveEvent.emit(<Move>{ x: p.x, y: p.y, color: tick.Changed.color });
       }
     }
 
@@ -129,7 +132,7 @@ repeat sides:
   }
 
   stepAll() {
-    while (this.step()) {}
+    while (this.step()) { }
   }
 
   get doc() {

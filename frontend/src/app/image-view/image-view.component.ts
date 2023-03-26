@@ -1,16 +1,19 @@
 import * as p5 from 'p5';
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, DoCheck, Input, OnDestroy, OnInit } from '@angular/core';
+import { Move } from '../editor/Move';
 
 @Component({
   selector: 'app-image-view',
   templateUrl: './image-view.component.html',
   styleUrls: ['./image-view.component.css']
 })
-export class ImageViewComponent implements OnInit, OnDestroy {
+export class ImageViewComponent implements OnInit, OnDestroy, DoCheck {
 
   private p5: any;
 
   @Input() socket?: WebSocket;
+
+  @Input() currentLocalMoves: Move[] = [];
 
   useGlobalImage: boolean = true;
 
@@ -35,6 +38,10 @@ export class ImageViewComponent implements OnInit, OnDestroy {
     this.p5.noCanvas();
   }
 
+  ngDoCheck() {
+    this.p5.executeMoves(this.currentLocalMoves);
+  }
+
   drawing(p: p5) {
     let image: p5.Image;
 
@@ -43,9 +50,9 @@ export class ImageViewComponent implements OnInit, OnDestroy {
     let translateY: number = 0;
 
     function applyScale(s: number) {
-        scale = scale * s;
-        translateX = p.mouseX * (1 - s) + translateX * s;
-        translateY = p.mouseY * (1 - s) + translateY * s;
+      scale = scale * s;
+      translateX = p.mouseX * (1 - s) + translateX * s;
+      translateY = p.mouseY * (1 - s) + translateY * s;
     }
 
 
@@ -57,6 +64,17 @@ export class ImageViewComponent implements OnInit, OnDestroy {
     let leftPressed: boolean;
     let rightPressed: boolean;
 
+
+    // @ts-ignore
+    p5.prototype.executeMoves = function (moves: Move[]) {
+      if (!image)
+        return;
+      image.loadPixels();
+      for (let { x, y, color } of moves) {
+        image.set(x, y, p.color(color));
+      }
+      image.updatePixels();
+    }
 
     // @ts-ignore
     p5.prototype.connectWebsocket = function (socket: any) {
@@ -113,11 +131,11 @@ export class ImageViewComponent implements OnInit, OnDestroy {
       renderer.parent('p5-target');
 
 
-      window.addEventListener("wheel", function(e) {
-          if ((p.mouseX > 0 && p.mouseX < p.width) && (p.mouseY > 0 && p.mouseY < p.height)) {
-              applyScale(e.deltaY > 0 ? 1.05 : 0.95);
-          }
-      } );
+      window.addEventListener("wheel", function (e) {
+        if ((p.mouseX > 0 && p.mouseX < p.width) && (p.mouseY > 0 && p.mouseY < p.height)) {
+          applyScale(e.deltaY > 0 ? 1.05 : 0.95);
+        }
+      });
 
 
       image = p.createImage(1000, 1000);
@@ -185,9 +203,9 @@ export class ImageViewComponent implements OnInit, OnDestroy {
 
         // Zoom "+" and "-" buttons
         if (p.key === '-') {
-            applyScale(0.95);
+          applyScale(0.95);
         } else if (p.key === "=") {
-            applyScale(1.05);
+          applyScale(1.05);
         }
       }
     };

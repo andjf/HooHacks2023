@@ -1,2 +1,2 @@
-<app-editor [socket]="socket"></app-editor>
-<app-image-view [socket]="socket"></app-image-view>
+<app-editor [socket]="socket" (moveEvent)="recieveMove($event)"></app-editor>
+<app-image-view [socket]="socket" [currentLocalMoves]="moves"></app-image-view>
