@@ -46,7 +46,7 @@ repeat sides:
 
   submitClicked() {
     try {
-      let result: tick[] = this.rust?.compile_and_execute(this.content, { x: 500, y: 500 });
+      let result: tick[] = this.rust?.compile_and_execute(this.content, { x: 500, y: 500 }, 1000, 1000);
       this.closeErrorMessage();
     }
     catch (error: any) {
