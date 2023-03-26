@@ -175,9 +175,17 @@ impl Interpreter {
                 self.current_inst += 1;
                 let val = extract_value!(self.variables, amount)?;
                 let mut ticks = Vec::new();
-                for _ in 0..val {
+                'outer: for _ in 0..val {
                     let old_inst = self.current_inst;
-                    ticks.extend(self.run(instructions.clone()).into_iter());
+                    let it = self.run(instructions.clone()).into_iter();
+                    ticks.reserve_exact(it.size_hint().0);
+                    for inst in it {
+                        let invalid = matches!(inst, Tick::Invalid { .. });
+                        ticks.push(inst);
+                        if invalid {
+                            break 'outer;
+                        }
+                    }
                     self.current_inst = old_inst;
                 }
                 return Ok(ticks);
