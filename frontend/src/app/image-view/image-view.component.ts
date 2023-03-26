@@ -44,7 +44,7 @@ export class ImageViewComponent implements OnInit, OnDestroy {
     let centerX: number;
     let centerY: number;
 
-    const DEFAULT_ZOOM_LEVEL: number = 10;
+    const DEFAULT_ZOOM_LEVEL: number = 1;
     let zoomLevel: number = DEFAULT_ZOOM_LEVEL;
 
     const DEFAULT_TRANSLATE_RATE: number = 1.0;

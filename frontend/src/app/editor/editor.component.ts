@@ -57,7 +57,7 @@ repeat sides:
   }
 
   submitClicked() {
-    this.ticks = this.rust?.compile_and_execute(this.content, { x: 500, y: 500 }, 1000, 1000);
+    this.ticks = this.rust?.compile_and_execute(this.content, { x: 50, y: 50 }, 1000, 1000);
     this.tickIndex = 0;
     this.stepAll();
 
