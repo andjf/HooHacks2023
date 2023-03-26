@@ -82,7 +82,6 @@ function rollbackToRevision(prev_revision) {
             // Compare colors
             if (safe_pixel !== problem_pixel) {
                 // If they differ, push the safe color to the modified_pixels array
-                console.log(`Diff at x = ${x} and y = ${y}`)
                 modified_pixels.push({ x: x, y: y, color: safe_state.state[y][x] })
             }
         }
@@ -116,8 +115,6 @@ function addNewRevision(changed_pixels, baseline_state) {
         if (y < 0 || y >= baseline_state.height) {
             continue;
         }
-
-        console.log("Updating: ", { x: x, y: y, color: color });
 
         // Change each necessary pixel in the baseline state
         baseline_state.state[y][x] = color;
