@@ -67,3 +67,6 @@
     border-radius: 5px;
 }
 
+.current-inst {
+    border: 1px solid red !important;
+}
