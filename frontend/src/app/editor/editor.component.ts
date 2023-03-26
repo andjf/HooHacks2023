@@ -67,6 +67,8 @@ repeat sides:
     });
     console.log(data);
     this.socket?.send(JSON.stringify({message: "post_update", data: data}));
+
+    this.updates = new Set();
   }
 
   runClicked() {
