@@ -41,6 +41,7 @@ repeat sides:
     const rustPromise: Promise<typeof Module> = import('../../assets/pkg');
     rustPromise.then(r => (this.rust = r)).catch(console.error);
   }
+
   showError: boolean = false;
   errorMessage: SafeHtml = `This is a multiline error message\n\n  Line 15 column 89: unrecognized token "among"\n\nFix or blah, blah, blah`
 
@@ -49,12 +50,23 @@ repeat sides:
   tickIndex = 0;
   showRun: boolean = false;
   marker: null | TextMarker = null;
+  updates: Set<any> = new Set();
 
   lineFormatter(line: string): string {
     return `${line} | `;
   }
 
   submitClicked() {
+    this.ticks = this.rust?.compile_and_execute(this.content, { x: 500, y: 500 }, 1000, 1000);
+    this.tickIndex = 0;
+    this.stepAll();
+
+    let data: any[] = [];
+    this.updates.forEach((val) => {
+      data.push(val);
+    });
+    console.log(data);
+    this.socket?.send(JSON.stringify({message: "post_update", data: data}));
   }
 
   runClicked() {
@@ -105,6 +117,9 @@ repeat sides:
       return false;
     }
     else if (tick.Changed) {
+      for (let p of tick.Changed.modified) {
+        this.updates.add({"x": p.x, "y": p.y, "color": parseInt(tick.Changed.color.substring(1), 16)});
+      }
     }
 
     this.tickIndex++;

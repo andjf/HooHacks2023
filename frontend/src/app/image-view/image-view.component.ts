@@ -59,64 +59,37 @@ export class ImageViewComponent implements OnInit, OnDestroy {
     // @ts-ignore
     p5.prototype.connectWebsocket = function(socket: any) {
       socket.addEventListener("message", (event: any) => {
-        let data = event.data;
+        let data = JSON.parse(event.data);
         if (data.message !== "success") {
           return;
         }
-        console.log(data);
-        // data = data.data;
-        //
-        // const W = data.width;
-        // const H = data.height;
-        // console.log(H, W);
-        //
-        // image.loadPixels();
-        //
-        // let pos = 0;
-        // for (let y = 0; y < H; y++) {
-        //   for (let x = 0; x < W; x++) {
-        //     let color = data.state[y][x];
-        //     image.pixels[pos + 0] = (color & 0xFF0000); // r
-        //     image.pixels[pos + 1] = (color & 0x00FF00); // g
-        //     image.pixels[pos + 2] = (color & 0x0000FF); // b
-        //     image.pixels[pos + 3] = 255; // a
-        //     pos += 4;
-        //   }
-        // }
-        //
-        // image.updatePixels();
+        data = data.data;
+
+        const W = data.width;
+        const H = data.height;
+        console.log(H, W);
+
+        image.loadPixels();
+
+        let pos = 0;
+        for (let y = 0; y < H; y++) {
+          for (let x = 0; x < W; x++) {
+            let color = data.state[y][x];
+            image.pixels[pos + 0] = (color & 0xFF0000); // r
+            image.pixels[pos + 1] = (color & 0x00FF00); // g
+            image.pixels[pos + 2] = (color & 0x0000FF); // b
+            image.pixels[pos + 3] = 255; // a
+            pos += 4;
+          }
+        }
+
+        image.updatePixels();
       });
 
       socket.addEventListener("open", () => {
-        console.log("sending get_update");
         socket.send(JSON.stringify({message: "get_update", data: ""}));
       });
     }
-
-    // const getState = () => {
-    //   p.httpGet("http://localhost:3000/api/state", "json", false, (resp) => {
-    //     // console.log(resp);
-    //     const W = resp.state.width;
-    //     const H = resp.state.height;
-    //     console.log(H, W);
-    //
-    //     image.loadPixels();
-    //
-    //     let pos = 0;
-    //     for (let y = 0; y < H; y++) {
-    //       for (let x = 0; x < W; x++) {
-    //         let color = resp.state.state[y][x];
-    //         image.pixels[pos + 0] = (color & 0xFF0000); // r
-    //         image.pixels[pos + 1] = (color & 0x00FF00); // g
-    //         image.pixels[pos + 2] = (color & 0x0000FF); // b
-    //         image.pixels[pos + 3] = 255; // a
-    //         pos += 4;
-    //       }
-    //     }
-    //
-    //     image.updatePixels();
-    //   });
-    // };
 
     p.setup = () => {
       const parent = document.getElementById('p5-target');

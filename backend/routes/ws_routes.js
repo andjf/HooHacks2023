@@ -58,8 +58,6 @@ router.ws("/", (ws, req) => {
                 break;
             case ("post_update"):
                 state.addNewRevision(data, null);
-                formatAndSend(ws, "success", "");
-                state
                 break;
             default:
                 formatAndSend(ws, "failure", "unrecognized action");
