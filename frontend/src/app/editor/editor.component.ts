@@ -60,10 +60,12 @@ repeat sides:
 
   runClicked() {
     try {
+      this.closeErrorMessage();
       this.showRun = false;
       this.ticks = this.rust?.compile_and_execute(this.content, { x: 500, y: 500 }, 1000, 1000);
+      this.tickIndex = 0;
       this.showRun = true;
-      this.closeErrorMessage();
+      this.step();
     }
     catch (error: any) {
       this.raiseError(error.toString());
@@ -72,13 +74,22 @@ repeat sides:
 
 
   step() {
-    if (this.tickIndex == this.ticks.length) {
+    if (this.tickIndex >= this.ticks.length) {
       this.showRun = false;
-      return;
+      this.marker?.clear();
+      return false;
     }
     let tick = this.ticks[this.tickIndex];
-    this.lineHighlight = tick.Tick?.line || tick.Changed?.line || tick.Invalid?.line;
-    if (this.lineHighlight) {
+
+    this.lineHighlight = tick.Tick?.line;
+    if (this.lineHighlight === null || this.lineHighlight === undefined)  {
+      this.lineHighlight = tick.Changed?.line;
+    }
+    if (this.lineHighlight === null || this.lineHighlight === undefined)  {
+      this.lineHighlight = tick.Invalid?.line;
+    }
+
+    if (this.lineHighlight !== null) {
       const { doc } = this;
       if (doc) {
         // Clear markers
@@ -88,10 +99,21 @@ repeat sides:
         });
       }
     }
+
+    if (tick.Invalid) {
+      this.raiseError(tick.Invalid.message);
+      this.showRun = false;
+      return false;
+    }
+    else if (tick.Changed) {
+    }
+
     this.tickIndex++;
+    return true;
   }
 
   stepAll() {
+    while (this.step()) {}
   }
 
   get doc() {

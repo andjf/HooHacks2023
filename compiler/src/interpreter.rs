@@ -184,9 +184,9 @@ impl Interpreter {
                 amount,
                 instructions,
             } => {
-                self.current_inst += 1;
                 let val = extract_value!(self.variables, amount)?;
                 let mut ticks = Vec::new();
+                self.current_inst += 1;
                 'outer: for _ in 0..val {
                     let old_inst = self.current_inst;
                     let it = self.run(instructions.clone()).into_iter();
@@ -202,7 +202,10 @@ impl Interpreter {
                 }
                 return Ok(ticks);
             }
-            Instruction::Empty => return Ok(Vec::new()),
+            Instruction::Empty => {
+                self.current_inst += 1;
+                return Ok(Vec::new());
+            }
         }
 
         if self.pos == old_pos && !color_changed && modified.is_empty() {
