@@ -41,8 +41,8 @@ export class ImageViewComponent implements OnInit, OnDestroy {
 
   drawing(p: p5) {
     let image: p5.Image;
-    let centerX: number;
-    let centerY: number;
+    let translateX: number;
+    let translateY: number;
 
     const DEFAULT_ZOOM_LEVEL: number = 1;
     let zoomLevel: number = DEFAULT_ZOOM_LEVEL;
@@ -112,28 +112,23 @@ export class ImageViewComponent implements OnInit, OnDestroy {
 
       image = p.createImage(1000, 1000);
 
-      // getState();
-
-      centerX = Math.floor(W / 2);
-      centerY = Math.floor(H / 2);
-
+      translateX = 0;
+      translateY = 0;
       p.noSmooth();
     };
 
     p.draw = () => {
-      let destWidth = p.width / (zoomLevel * 2);
-      let destHeight = p.height / (zoomLevel * 2);
 
       // If the mouse is "focused" on the canvas
       if ((p.mouseX > 0 && p.mouseX < p.width) && (p.mouseY > 0 && p.mouseY < p.height)) {
         if (upPressed)
-          centerY -= translate_rate;
+          translateY += translate_rate;
         if (downPressed)
-          centerY += translate_rate;
+          translateY -= translate_rate;
         if (leftPressed)
-          centerX -= translate_rate;
+          translateX += translate_rate;
         if (rightPressed)
-          centerX += translate_rate;
+          translateX -= translate_rate;
 
         if (!upPressed && !downPressed && !leftPressed && !rightPressed) {
           translate_rate = DEFAULT_TRANSLATE_RATE;
@@ -141,9 +136,11 @@ export class ImageViewComponent implements OnInit, OnDestroy {
           translate_rate += 0.10;
         }
       }
+      p.translate(translateX, translateY);
+      p.scale(zoomLevel)
 
       p.background(0);
-      p.image(image, 0, 0, p.width, p.height, centerX - destWidth, centerY - destHeight, destWidth, destHeight);
+      p.image(image, 0, 0, image.width, image.height);
     };
 
     p.keyReleased = () => {
@@ -173,16 +170,17 @@ export class ImageViewComponent implements OnInit, OnDestroy {
       if ((p.mouseX > 0 && p.mouseX < p.width) && (p.mouseY > 0 && p.mouseY < p.height)) {
         // Backslash resetst the position
         if (p.key === '\\') {
-          centerX = Math.floor(image.width / 2);
-          centerY = Math.floor(image.height / 2);
+          translateX = Math.floor(image.width / 2);
+          translateY = Math.floor(image.height / 2);
           zoomLevel = DEFAULT_ZOOM_LEVEL;
         }
 
         // Zoom "+" and "-" buttons
+        let changedZoom = false;
         if (p.key === '-') {
-          zoomLevel = Math.max(1, zoomLevel - 5);
+          zoomLevel -= 0.1;
         } else if (p.key === "=") {
-          zoomLevel = Math.min(80, zoomLevel + 5);
+          zoomLevel += 0.1;
         }
       }
     };

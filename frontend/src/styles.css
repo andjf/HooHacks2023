@@ -128,10 +128,10 @@ app-image-view {
     position: relative;
     bottom: 35%;
     left: 12%;
-    max-height: 12rem;
-    max-width: 28rem;
+    max-height: 12%;
+    max-width: 28%;
     background-color: #0e121e;
-    padding: 1rem;
+    padding: 1%;
     overflow-y: scroll;
 }
 
