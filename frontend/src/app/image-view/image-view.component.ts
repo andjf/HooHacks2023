@@ -41,7 +41,12 @@ export class ImageViewComponent implements OnInit, OnDestroy {
     let image: p5.Image;
     let centerX: number;
     let centerY: number;
-    let zoomLevel: number = 20;
+
+    const DEFAULT_ZOOM_LEVEL: number = 10;
+    let zoomLevel: number = DEFAULT_ZOOM_LEVEL;
+
+    const DEFAULT_TRANSLATE_RATE: number = 1.0;
+    let translate_rate: number = DEFAULT_TRANSLATE_RATE;
 
     let upPressed: boolean;
     let downPressed: boolean;
@@ -50,9 +55,10 @@ export class ImageViewComponent implements OnInit, OnDestroy {
 
     const getState = () => {
       p.httpGet("http://localhost:3000/api/state", "json", false, (resp) => {
-        console.log("Displaying new state");
+        // console.log(resp);
         const W = resp.state.width;
         const H = resp.state.height;
+        console.log(H, W);
 
         image.loadPixels();
 
@@ -91,23 +97,20 @@ export class ImageViewComponent implements OnInit, OnDestroy {
 
       getState();
 
-      //centerX = Math.floor(W / 2);
-      //centerY = Math.floor(H/2);
-
-      centerX = 0;
-      centerY = 0;
+      centerX = Math.floor(W / 2);
+      centerY = Math.floor(H / 2);
 
       p.noSmooth();
 
       const socket = new WebSocket("ws://localhost:3000/ws/notification");
 
       socket.addEventListener("open", (event) => {
-        console.log("Connection established");
+        socket.send("Hello Server!");
       });
 
       socket.addEventListener("message", (event) => {
         getState();
-        console.log("Server says: ", event.data);
+        console.log("Message from server ", event.data);
       });
     };
 
@@ -115,16 +118,21 @@ export class ImageViewComponent implements OnInit, OnDestroy {
       let destWidth = p.width / (zoomLevel * 2);
       let destHeight = p.height / (zoomLevel * 2);
 
-      let panRate = 1.0;
 
       if (upPressed)
-        centerY -= panRate;
+        centerY -= translate_rate;
       if (downPressed)
-        centerY += panRate;
+        centerY += translate_rate;
       if (leftPressed)
-        centerX -= panRate;
+        centerX -= translate_rate;
       if (rightPressed)
-        centerX += panRate;
+        centerX += translate_rate;
+
+      if (!upPressed && !downPressed && !leftPressed && !rightPressed) {
+        translate_rate = DEFAULT_TRANSLATE_RATE;
+      } else {
+        translate_rate += 0.10;
+      }
 
       p.background(0);
       p.image(image, 0, 0, p.width, p.height, centerX - destWidth, centerY - destHeight, destWidth, destHeight);
@@ -143,20 +151,26 @@ export class ImageViewComponent implements OnInit, OnDestroy {
     }
 
     p.keyPressed = () => {
-      if (p.keyCode == p.UP_ARROW) {
+      if (p.keyCode === p.UP_ARROW) {
         upPressed = true;
-      } else if (p.keyCode == p.DOWN_ARROW) {
+      } else if (p.keyCode === p.DOWN_ARROW) {
         downPressed = true;
-      } else if (p.keyCode == p.LEFT_ARROW) {
+      } else if (p.keyCode === p.LEFT_ARROW) {
         leftPressed = true;
-      } else if (p.keyCode == p.RIGHT_ARROW) {
+      } else if (p.keyCode === p.RIGHT_ARROW) {
         rightPressed = true;
       }
 
+      if (p.key === ' ') {
+        centerX = Math.floor(image.width / 2);
+        centerY = Math.floor(image.height / 2);
+        zoomLevel = DEFAULT_ZOOM_LEVEL;
+      }
+
       if (p.key === '-') {
-        zoomLevel = Math.max(1, zoomLevel - 10);
+        zoomLevel = Math.max(1, zoomLevel - 5);
       } else if (p.key === "=") {
-        zoomLevel = Math.min(80, zoomLevel + 10);
+        zoomLevel = Math.min(80, zoomLevel + 5);
       }
     };
   }
