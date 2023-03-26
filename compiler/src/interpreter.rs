@@ -16,10 +16,12 @@ pub struct Interpreter {
     current_color: String,
     rng: OsRng,
     current_inst: usize,
+    width: i16,
+    height: i16,
 }
 
 impl Interpreter {
-    pub fn new(starting_pos: Position) -> Self {
+    pub fn new(starting_pos: Position, width: i16, height: i16) -> Self {
         Self {
             pos: starting_pos,
             dir: 0.0,
@@ -28,6 +30,8 @@ impl Interpreter {
             current_color: "#000".to_string(),
             rng: OsRng::default(),
             current_inst: 0,
+            width,
+            height,
         }
     }
 
@@ -64,9 +68,17 @@ impl Interpreter {
         }
 
         macro_rules! _move {
-            ($pos:expr, $dir:expr, $val:expr) => {{
-                $pos.x += ($dir.cos() * f32::from($val)).trunc() as i16;
-                $pos.y += ($dir.sin() * f32::from($val)).trunc() as i16;
+            ($self:expr, $dir:expr, $val:expr) => {{
+                $self.pos.x = $self
+                    .pos
+                    .x
+                    .saturating_add(($dir.cos() * f32::from($val)).trunc() as i16)
+                    .clamp(0, $self.width - 1);
+                $self.pos.y = $self
+                    .pos
+                    .y
+                    .saturating_add(($dir.sin() * f32::from($val)).trunc() as i16)
+                    .clamp(0, $self.height - 1);
             }};
         }
 
@@ -76,7 +88,7 @@ impl Interpreter {
         match inst {
             Instruction::Forward(val) => {
                 let val = extract_value!(self.variables, val)?;
-                _move!(self.pos, self.dir, val);
+                _move!(self, self.dir, val);
 
                 if self.pen_down {
                     modified = line::lerp(self.pos, old_pos);
@@ -84,7 +96,7 @@ impl Interpreter {
             }
             Instruction::Backward(val) => {
                 let val = extract_value!(self.variables, val)?;
-                _move!(self.pos, self.dir, -val);
+                _move!(self, self.dir, -val);
 
                 if self.pen_down {
                     modified = line::lerp(self.pos, old_pos);
@@ -93,7 +105,7 @@ impl Interpreter {
             Instruction::Left(val) => {
                 let val = extract_value!(self.variables, val)?;
                 let dir = self.dir - degrees_to_radians(90);
-                _move!(self.pos, dir, val);
+                _move!(self, dir, val);
 
                 if self.pen_down {
                     modified = line::lerp(self.pos, old_pos);
@@ -102,7 +114,7 @@ impl Interpreter {
             Instruction::Right(val) => {
                 let val = extract_value!(self.variables, val)?;
                 let dir = self.dir + degrees_to_radians(90);
-                _move!(self.pos, dir, val);
+                _move!(self, dir, val);
 
                 if self.pen_down {
                     modified = line::lerp(self.pos, old_pos);
