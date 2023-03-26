@@ -83,7 +83,13 @@ export class ImageViewComponent implements OnInit, OnDestroy, DoCheck {
       local_image.loadPixels();
       while (moves.length > 0) {
         const { x, y, color } = moves[0];
-        local_image.set(x, y, p.color(color));
+        const expanded_color = color.length === 3 ? color.charAt(0) + color.charAt(0) + color.charAt(1) + color.charAt(1) + color.charAt(2) + color.charAt(2) : color;
+        let value = parseInt(expanded_color, 16);
+        let pos = (y * local_image.width + x) * 4;
+        local_image.pixels[pos + 0] = value & 0xFF0000; // r
+        local_image.pixels[pos + 1] = value & 0x00FF00; // g
+        local_image.pixels[pos + 2] = value & 0x0000FF; // b
+        local_image.pixels[pos + 3] = 255; // a
         moves.shift();
       }
       local_image.updatePixels();
