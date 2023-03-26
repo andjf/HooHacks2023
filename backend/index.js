@@ -14,15 +14,15 @@ dotenv.config()
 // Load in environment variables
 console.log(process.env)
 
-app.use(cors())
 app.use(bodyParser.json());
 app.use(
     bodyParser.urlencoded({
         extended: true,
     })
 );
+app.use(cors());
 
-state.createGlobalState(process.env.BOARD_WIDTH, process.env.BOARD_HEIGHT);
+state.createGlobalState(parseInt(process.env.BOARD_WIDTH), parseInt(process.env.BOARD_HEIGHT));
 //state.addNewRevision([{ x: 0, y: 0, color: 0xFFBBCC }], null);
 //state.addNewRevision([{ x: 1, y: 0, color: 0xDD0000 }, { x: 3, y: 2, color: 0x212343 }], null);
 //state.rollbackToRevision(1);

@@ -35,8 +35,8 @@ function createGlobalState(width, height) {
     // Clear out board states from a previous run
     removeOldBoardStateFiles();
 
-    global_state.height = parseInt(height);
-    global_state.width = parseInt(width);
+    global_state.height = height;
+    global_state.width = width;
 
     for (let y = 0; y < height; y++) {
         global_state.state[y] = [];
