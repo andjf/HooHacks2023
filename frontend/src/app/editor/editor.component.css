@@ -44,7 +44,7 @@
 .footer {
     width: calc(40vw - 50px);
     padding: 25px;
-    background-color: rgb(189, 74, 74, 0.75);
+    background-color: #353739;
     border-radius: 10px 10px 0px 0px;
 }
 
@@ -60,7 +60,7 @@
     color: white;
     position: absolute;
     right: 25px;
-    bottom: 50px;
+    bottom: 1rem;
     cursor: pointer;
     padding: 0px 5px;
     background-color: #00000050;
