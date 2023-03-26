@@ -85,20 +85,15 @@ export class ImageViewComponent implements OnInit, OnDestroy {
     p.draw = () => {
       let destWidth = p.width / (zoomLevel * 2);
       let destHeight = p.height / (zoomLevel * 2);
-      console.log(p.height, destHeight, centerY);
 
-      if (upPressed) {
+      if (upPressed)
         centerY -= 0.5;
-      }
-      if (downPressed) {
+      if (downPressed)
         centerY += 0.5;
-      }
-      if (leftPressed) {
+      if (leftPressed)
         centerX -= 0.5;
-      }
-      if (rightPressed) {
+      if (rightPressed)
         centerX += 0.5;
-      }
 
       p.background(0);
       p.image(image, 0, 0, p.width, p.height, centerX - destWidth, centerY - destHeight, destWidth, destHeight);
