@@ -39,7 +39,7 @@ export class ImageViewComponent implements OnInit, OnDestroy {
     this.p5.noCanvas();
   }
 
-  drawing (p: p5) {
+  drawing(p: p5) {
     let image: p5.Image;
     let centerX: number;
     let centerY: number;
@@ -57,7 +57,7 @@ export class ImageViewComponent implements OnInit, OnDestroy {
 
 
     // @ts-ignore
-    p5.prototype.connectWebsocket = function(socket: any) {
+    p5.prototype.connectWebsocket = function (socket: any) {
       socket.addEventListener("message", (event: any) => {
         let data = JSON.parse(event.data);
         if (data.message !== "success") {
@@ -87,7 +87,7 @@ export class ImageViewComponent implements OnInit, OnDestroy {
       });
 
       socket.addEventListener("open", () => {
-        socket.send(JSON.stringify({message: "get_update", data: ""}));
+        socket.send(JSON.stringify({ message: "get_update", data: "" }));
       });
     }
 
@@ -124,20 +124,22 @@ export class ImageViewComponent implements OnInit, OnDestroy {
       let destWidth = p.width / (zoomLevel * 2);
       let destHeight = p.height / (zoomLevel * 2);
 
+      // If the mouse is "focused" on the canvas
+      if ((p.mouseX > 0 && p.mouseX < p.width) && (p.mouseY > 0 && p.mouseY < p.height)) {
+        if (upPressed)
+          centerY -= translate_rate;
+        if (downPressed)
+          centerY += translate_rate;
+        if (leftPressed)
+          centerX -= translate_rate;
+        if (rightPressed)
+          centerX += translate_rate;
 
-      if (upPressed)
-        centerY -= translate_rate;
-      if (downPressed)
-        centerY += translate_rate;
-      if (leftPressed)
-        centerX -= translate_rate;
-      if (rightPressed)
-        centerX += translate_rate;
-
-      if (!upPressed && !downPressed && !leftPressed && !rightPressed) {
-        translate_rate = DEFAULT_TRANSLATE_RATE;
-      } else {
-        translate_rate += 0.10;
+        if (!upPressed && !downPressed && !leftPressed && !rightPressed) {
+          translate_rate = DEFAULT_TRANSLATE_RATE;
+        } else {
+          translate_rate += 0.10;
+        }
       }
 
       p.background(0);
@@ -167,16 +169,19 @@ export class ImageViewComponent implements OnInit, OnDestroy {
         rightPressed = true;
       }
 
-      if (p.key === ' ') {
-        centerX = Math.floor(image.width / 2);
-        centerY = Math.floor(image.height / 2);
-        zoomLevel = DEFAULT_ZOOM_LEVEL;
-      }
+      // If the mouse is "focused" on the canvas
+      if ((p.mouseX > 0 && p.mouseX < p.width) && (p.mouseY > 0 && p.mouseY < p.height)) {
+        if (p.key === ' ') {
+          centerX = Math.floor(image.width / 2);
+          centerY = Math.floor(image.height / 2);
+          zoomLevel = DEFAULT_ZOOM_LEVEL;
+        }
 
-      if (p.key === '-') {
-        zoomLevel = Math.max(1, zoomLevel - 5);
-      } else if (p.key === "=") {
-        zoomLevel = Math.min(80, zoomLevel + 5);
+        if (p.key === '-') {
+          zoomLevel = Math.max(1, zoomLevel - 5);
+        } else if (p.key === "=") {
+          zoomLevel = Math.min(80, zoomLevel + 5);
+        }
       }
     };
   }
