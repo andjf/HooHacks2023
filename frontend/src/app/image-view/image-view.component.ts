@@ -40,10 +40,20 @@ export class ImageViewComponent implements OnInit, OnDestroy {
     let centerY: number;
     let zoomLevel: number = 50;
 
+    let upPressed: boolean;
+    let downPressed: boolean;
+    let leftPressed: boolean;
+    let rightPressed: boolean;
+
     p.setup = () => {
       const parent = document.getElementById('p5-target');
       if (!parent)
         return
+
+      upPressed = false;
+      downPressed = false;
+      leftPressed = false;
+      rightPressed = false;
 
       const rect: DOMRect = parent.getBoundingClientRect();
       const W = Math.floor(rect.width);
@@ -55,7 +65,7 @@ export class ImageViewComponent implements OnInit, OnDestroy {
       for (let y = 0; y < H * 4; y++) {
         for (let x = 0; x < W * 4; x++) {
           let pos = (y * W + x) * 4;
-          image.pixels[pos+ 0] = p.random(256); // r
+          image.pixels[pos + 0] = p.random(256); // r
           image.pixels[pos + 1] = p.random(256); // g
           image.pixels[pos + 2] = p.random(256); // b
           image.pixels[pos + 3] = 255; // a
@@ -64,7 +74,7 @@ export class ImageViewComponent implements OnInit, OnDestroy {
       for (let y = H * 4 - 4; y < H * 4; y++) {
         for (let x = 0; x < W * 4; x++) {
           let pos = (y * W + x) * 4;
-          image.pixels[pos+ 0] = 255;
+          image.pixels[pos + 0] = 255;
           image.pixels[pos + 1] = 0;
           image.pixels[pos + 2] = 0;
           image.pixels[pos + 3] = 255;
@@ -72,52 +82,63 @@ export class ImageViewComponent implements OnInit, OnDestroy {
       }
       image.updatePixels();
 
-      // centerX = Math.floor(W / 2);
-      // centerY = Math.floor(H / 2);
-      centerX = Math.floor(W * 9/ 10);
-      centerY = Math.floor(H * 9/ 10);
+      centerX = Math.floor(W / 2);
+      centerY = Math.floor(H / 2);
 
       p.noSmooth();
     };
 
     p.draw = () => {
-      p.background(0);
-      let destWidth = p.width / zoomLevel;
-      let destHeight = p.height / zoomLevel;
-      p.image(image, 0, 0, p.width, p.height, centerX - destWidth / 2, centerY - destHeight / 2, destWidth, destHeight);
-    };
-
-    // p.mousePressed = () => {
-    //   if (p.mouseButton == p.RIGHT) {
-    //     zoomLevel = Math.min(80, zoomLevel + 10);
-    //   } else if (p.mouseButton == p.LEFT) {
-    //     zoomLevel = Math.max(10, zoomLevel - 10);
-    //   }
-    //   displayImage = p.createGraphics(Math.floor(image.width / zoomLevel), Math.floor(image.height / zoomLevel));
-    //   displayImage.loadPixels();
-    //   for (let dy = 0, y = centerY; dy < displayImage.height; dy++, y++) {
-    //     for (let dx = 0, x = centerX; dx < displayImage.width; dx++, x++) {
-    //       displayImage.set(dx, dy, image.get(x, y));
-    //     }
-    //   }
-    //   displayImage.updatePixels();
-    // }
-
-    p.keyPressed = () => {
       let destWidth = p.width / (zoomLevel * 2);
       let destHeight = p.height / (zoomLevel * 2);
       console.log(p.height, destHeight, centerY);
 
-      if (p.key === '-') {
-        zoomLevel = Math.max(10, zoomLevel - 10);
-      } else if (p.key == "+") {
-        zoomLevel = Math.min(80, zoomLevel + 10);
-      // } else if (p.keyCode == p.UP_ARROW && p.height / zoomLevel + centerY < image.height) {
-      } else if (p.keyCode == p.UP_ARROW) {
-        centerY = p.max(centerY - 1, destHeight);
+      if (upPressed) {
+        centerY -= 0.5;
+      }
+      if (downPressed) {
+        centerY += 0.5;
+      }
+      if (leftPressed) {
+        centerX -= 0.5;
+      }
+      if (rightPressed) {
+        centerX += 0.5;
+      }
+
+      p.background(0);
+      p.image(image, 0, 0, p.width, p.height, centerX - destWidth, centerY - destHeight, destWidth, destHeight);
+    };
+
+    p.keyReleased = () => {
+      if (p.keyCode == p.UP_ARROW) {
+        upPressed = false;
       } else if (p.keyCode == p.DOWN_ARROW) {
-        centerY++;
+        downPressed = false;
+      } else if (p.keyCode == p.LEFT_ARROW) {
+        leftPressed = false;
+      } else if (p.keyCode == p.RIGHT_ARROW) {
+        rightPressed = false;
+      }
+    }
+
+    p.keyPressed = () => {
+      if (p.keyCode == p.UP_ARROW) {
+        upPressed = true;
+      } else if (p.keyCode == p.DOWN_ARROW) {
+        downPressed = true;
+      } else if (p.keyCode == p.LEFT_ARROW) {
+        leftPressed = true;
+      } else if (p.keyCode == p.RIGHT_ARROW) {
+        rightPressed = true;
+      }
+
+      if (p.key === '-') {
+        zoomLevel = Math.max(5, zoomLevel - 10);
+      } else if (p.key === "=") {
+        zoomLevel = Math.min(80, zoomLevel + 10);
       }
     };
   }
 }
+0
