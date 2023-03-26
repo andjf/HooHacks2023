@@ -127,6 +127,6 @@ repeat sides:
 
   raiseError(errorMessage: string) {
     this.showError = true;
-    this.errorMessage = this.sanitizer.bypassSecurityTrustHtml(errorMessage.toString());
+    this.errorMessage = this.sanitizer.bypassSecurityTrustHtml(errorMessage.replaceAll("'\r'", "'\\r'").replaceAll("'\n'", "'\\n'"));
   }
 }
