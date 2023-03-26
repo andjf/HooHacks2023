@@ -5,7 +5,11 @@ authors = ["kosayoda <git@siek.dev>"]
 edition = "2021"
 license = "MIT OR Apache-2.0"
 
+[lib]
+crate-type = ["cdylib", "rlib"]
+
 [dependencies]
+ariadne = "0.2.0"
 chumsky = "1.0.0-alpha.3"
 # Argument parser
 clap = { version = "4.1.6", features = ["derive"] }
@@ -23,6 +27,10 @@ time = { version = "0.3.17", features = ["formatting"] }
 tracing = "0.1.37"
 tracing-error = "0.2.0"
 tracing-subscriber = { version = "0.3.16", features = ["env-filter", "time"] }
+# WASM support
+serde = { version = "1.0.158", features = ["derive"] }
+serde-wasm-bindgen = "0.5.0"
+wasm-bindgen = "0.2.84"
 
 # Build `backtrace` with optimizations for `color-eyre` performance
 [profile.dev.package.backtrace]

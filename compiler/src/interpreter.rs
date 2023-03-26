@@ -2,24 +2,20 @@ use std::{collections::HashMap, f32::consts::PI};
 
 use rand::{rngs::OsRng, Rng};
 
-use crate::{line, Color, Constant, Instruction, Position, Tick, Value, Variable};
+use crate::{line, Constant, Instruction, Position, Tick, Value, Variable};
 
 fn degrees_to_radians(degrees: i16) -> f32 {
     degrees as f32 / 180.0 * PI
-}
-
-fn radians_to_degrees(radians: f32) -> i16 {
-    (radians / PI * 180.0) as i16
 }
 
 pub struct Interpreter {
     pos: Position,
     dir: f32,
     pen_down: bool,
-    instructions: Vec<Instruction>,
     variables: HashMap<String, i16>,
     current_color: String,
     rng: OsRng,
+    current_inst: usize,
 }
 
 impl Interpreter {
@@ -28,25 +24,33 @@ impl Interpreter {
             pos: starting_pos,
             dir: 0.0,
             pen_down: false,
-            instructions: Vec::new(),
             variables: HashMap::new(),
             current_color: "#000".to_string(),
             rng: OsRng::default(),
+            current_inst: 0,
         }
     }
 
-    pub fn run(mut self, instructions: Vec<Instruction>) -> Vec<Tick> {
-        instructions
-            .into_iter()
-            .enumerate()
-            .map(|(line, inst)| match self.tick(inst) {
-                Ok(tick) => tick,
-                Err(message) => Tick::Invalid { line, message },
-            })
-            .collect()
+    pub fn run(&mut self, instructions: Vec<Instruction>) -> Vec<Tick> {
+        let mut ticks = Vec::new();
+        for inst in instructions {
+            match self.tick(inst) {
+                Ok(tick) => {
+                    ticks.extend(tick.into_iter());
+                }
+                Err(message) => {
+                    ticks.push(Tick::Invalid {
+                        line: self.current_inst,
+                        message,
+                    });
+                    break;
+                }
+            };
+        }
+        ticks
     }
 
-    fn tick(&mut self, inst: Instruction) -> Result<Tick, String> {
+    fn tick(&mut self, inst: Instruction) -> Result<Vec<Tick>, String> {
         macro_rules! extract_value {
             ($variables:expr, $value: ident) => {
                 match $value {
@@ -164,16 +168,36 @@ impl Interpreter {
                 self.current_color = c;
                 color_changed = true;
             }
+            Instruction::Repeat {
+                amount,
+                instructions,
+            } => {
+                self.current_inst += 1;
+                let val = extract_value!(self.variables, amount)?;
+                let mut ticks = Vec::new();
+                for _ in 0..val {
+                    let old_inst = self.current_inst;
+                    ticks.extend(self.run(instructions.clone()).into_iter());
+                    self.current_inst = old_inst;
+                }
+                return Ok(ticks);
+            }
+            Instruction::Empty => (),
         }
 
         if self.pos == old_pos && !color_changed && modified.is_empty() {
-            Ok(Tick::Tick)
+            self.current_inst += 1;
+            Ok(vec![Tick::Tick {
+                line: self.current_inst,
+            }])
         } else {
-            Ok(Tick::Changed {
+            self.current_inst += 1;
+            Ok(vec![Tick::Changed {
+                line: self.current_inst,
                 position: self.pos,
                 color: self.current_color.clone(),
                 modified,
-            })
+            }])
         }
     }
 }

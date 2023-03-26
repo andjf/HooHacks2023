@@ -77,14 +77,38 @@ pub fn parser<'input>(
         .ignore_then(color_hex)
         .map(Instruction::Color);
 
+    let empty = text::inline_whitespace()
+        .ignore_then(text::newline())
+        .ignored()
+        .to(Instruction::Empty);
+
     let instruction = choice((
         forward, backward, left, right, turn, pendown, penup, add, sub, mul, div, set, random,
         color,
-    ));
+    ))
+    .then_ignore(text::newline());
 
-    instruction
-        .separated_by(text::newline())
-        .allow_trailing()
-        .allow_leading()
-        .collect()
+    let block = recursive(|block| {
+        let indent = just(' ')
+            .repeated()
+            .configure(|cfg, parent_indent| cfg.exactly(*parent_indent));
+
+        let repeat = just("repeat")
+            .ignore_then(text::inline_whitespace())
+            .ignore_then(value)
+            .then_ignore(text::inline_whitespace())
+            .then_ignore(just(":"))
+            .then_ignore(text::newline())
+            .then(block)
+            .map(|(amount, instructions)| Instruction::Repeat {
+                amount,
+                instructions,
+            });
+        let statement = choice((instruction, empty, repeat));
+        text::whitespace()
+            .count()
+            .then_with_ctx(statement.separated_by(indent).collect())
+    });
+
+    block.with_ctx(0)
 }

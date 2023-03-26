@@ -1,6 +1,6 @@
 use crate::Position;
 
-pub fn lerp(mut start: Position, mut end: Position) -> Vec<Position> {
+pub fn lerp(start: Position, end: Position) -> Vec<Position> {
     let dx = end.x - start.x;
     let dy = end.y - start.y;
     let n = dx.abs().max(dy.abs());

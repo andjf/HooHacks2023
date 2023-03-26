@@ -1,0 +1,10 @@
+set sides 10
+set turn_amount 360
+set side_length 15
+
+div turn_amount sides
+
+pendown
+repeat sides:
+  forward side_length
+  turn turn_amount

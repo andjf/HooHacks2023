@@ -3,19 +3,14 @@ use color_eyre::Result;
 
 use compiler::{parser, Interpreter, Position};
 
-static TEST: &str = r#"
-pendown
-turn 45
-forward 5
-penup
-"#;
-
 fn main() -> Result<()> {
     setup()?;
     tracing::debug!("Debug logging enabled.");
 
-    let instructions = parser().parse(TEST).into_result().unwrap();
-    let interpreter = Interpreter::new(Position { x: 0, y: 0 });
+    let test_file = std::fs::read_to_string("test.ca")?;
+    let instructions = parser().parse(&test_file).into_result().unwrap();
+    println!("{:#?}", instructions);
+    let mut interpreter = Interpreter::new(Position { x: 0, y: 0 });
     let ticks = interpreter.run(instructions);
     println!("{:#?}", ticks);
 
