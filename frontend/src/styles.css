@@ -5,3 +5,19 @@
     margin: 0;
     padding: 0;
 }
+
+.ansi-black {
+    color: black;
+}
+
+.ansi-red {
+    color: red;
+}
+
+.ansi-green {
+    color: green;
+}
+
+.ansi-magenta {
+    color: magenta;
+}

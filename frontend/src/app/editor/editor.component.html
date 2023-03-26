@@ -12,7 +12,7 @@
     </ngx-codemirror>
   </div>
   <div class="footer" [@outAnimation] *ngIf="showError">
-    <a id="close" (click)="closeErrorMessage()">v</a>
-    <pre id="error-text">{{ errorMessage }}</pre>
+    <a id="close" (click)="closeErrorMessage()">x</a>
+    <pre id="error-text" [innerHtml]="errorMessage"></pre>
   </div>
 </div>

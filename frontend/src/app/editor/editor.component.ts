@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { trigger, style, animate, transition } from '@angular/animations';
 
 import * as Module from '../../assets/pkg/compiler';
+import { tick } from './Tick';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-editor',
@@ -29,21 +31,27 @@ repeat sides:
 
   private rust?: typeof Module;
 
+  constructor(private sanitizer: DomSanitizer) { }
+
   ngOnInit(): void {
     const rustPromise: Promise<typeof Module> = import('../../assets/pkg');
     rustPromise.then(r => (this.rust = r)).catch(console.error);
   }
-
-
-  showError: boolean = true;
-  errorMessage: string = `This is a multiline error message\n\n  Line 15 column 89: unrecognized token "among"\n\nFix or blah, blah, blah`
+  showError: boolean = false;
+  errorMessage: SafeHtml = `This is a multiline error message\n\n  Line 15 column 89: unrecognized token "among"\n\nFix or blah, blah, blah`
 
   lineFormatter(line: string): string {
     return `${line} | `;
   }
 
   submitClicked() {
-    console.log(this.rust?.compile_and_execute(this.content, { x: 500, y: 500 }));
+    try {
+      let result: tick[] = this.rust?.compile_and_execute(this.content, { x: 500, y: 500 });
+      this.closeErrorMessage();
+    }
+    catch (error: any) {
+      this.raiseError(error.toString());
+    }
   }
 
   runClicked() {
@@ -57,6 +65,6 @@ repeat sides:
 
   raiseError(errorMessage: string) {
     this.showError = true;
-    this.errorMessage = errorMessage;
+    this.errorMessage = this.sanitizer.bypassSecurityTrustHtml(errorMessage.toString());
   }
 }
