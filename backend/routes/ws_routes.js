@@ -11,12 +11,12 @@ router.use((req, res, next) => {
 });
 
 router.ws("/notification", (ws, req) => {
-    events.on("state_update", () => {
+    events.emitter.on(events.STATE_UPDATE_EVENT, () => {
         ws.send(JSON.stringify({ message: "State has been updated" }));
     });
 
     ws.on("message", () => {
-        ws.send(JSON.stringify({message: "No CRUD services are provided at this endpoint."}));
+        ws.send(JSON.stringify({ message: "No CRUD services are provided at this endpoint." }));
     })
 
     ws.on("close", () => {

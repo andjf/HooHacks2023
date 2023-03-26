@@ -41,7 +41,8 @@ function createGlobalState(width, height) {
     for (let y = 0; y < height; y++) {
         global_state.state[y] = [];
         for (var x = 0; x < width; x++) {
-            global_state.state[y][x] = 000000;
+            // Initialize each pixel to black (#000000)
+            global_state.state[y][x] = 0x000000;
         }
     }
 
@@ -62,7 +63,7 @@ function rollbackToRevision(prev_revision) {
 
     console.log("Rolling back to revision", prev_revision)
 
-    let modified_pixels = []
+    let modified_pixels = [];
     let safe_state = fetchBoardStateFromFile(prev_revision);
     let problem_state = fetchBoardStateFromFile(prev_revision + 1);
 
@@ -109,14 +110,14 @@ function addNewRevision(changed_pixels, baseline_state) {
         let y = update.y;
         let color = update.color;
 
-        console.log("Updating: ", { x: x, y: y, color: color });
+        if (x < 0 || x >= baseline_state.width) {
+            continue;
+        }
+        if (y < 0 || y >= baseline_state.height) {
+            continue;
+        }
 
-        if (x < 0 || x > state_revision.width) {
-            continue;
-        }
-        if (y < 0 | y > state_revision.height) {
-            continue;
-        }
+        console.log("Updating: ", { x: x, y: y, color: color });
 
         // Change each necessary pixel in the baseline state
         baseline_state.state[y][x] = color;
@@ -128,7 +129,7 @@ function addNewRevision(changed_pixels, baseline_state) {
     //Update the global state to match
     global_state = baseline_state;
 
-    events.emit("state_update");
+    events.emitter.emit(events.STATE_UPDATE_EVENT);
 }
 
 function getCurrentState() {
