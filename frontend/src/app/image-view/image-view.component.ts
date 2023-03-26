@@ -39,9 +39,12 @@ export class ImageViewComponent implements OnInit, OnDestroy, DoCheck {
   }
 
   ngDoCheck() {
-    let copy = this.currentLocalMoves.slice();
-    this.currentLocalMoves = [];
-    this.p5.executeMoves(copy);
+    this.p5.executeMoves(this.currentLocalMoves);
+  }
+
+  flipScope() {
+    this.useGlobalImage = !this.useGlobalImage
+    this.p5.setUseGlobalImage(this.useGlobalImage);
   }
 
   drawing(p: p5) {
@@ -70,12 +73,12 @@ export class ImageViewComponent implements OnInit, OnDestroy, DoCheck {
     let useGlobalImage = true;
     // @ts-ignore
     p5.prototype.setUseGlobalImage = function (ugi: boolean) {
-        useGlobalImage = ugi;
+      useGlobalImage = ugi;
     }
 
     // @ts-ignore
     p5.prototype.executeMoves = function (moves: Move[]) {
-      if (!local_image)
+      if (local_image === undefined)
         return;
       local_image.loadPixels();
       for (let { x, y, color } of moves) {
@@ -95,11 +98,23 @@ export class ImageViewComponent implements OnInit, OnDestroy, DoCheck {
 
         const W = data.width;
         const H = data.height;
-        console.log(H, W);
+
+        local_image.loadPixels();
+        let pos = 0;
+        for (let y = 0; y < H; y++) {
+          for (let x = 0; x < W; x++) {
+            local_image.pixels[pos + 0] = 255; // r
+            local_image.pixels[pos + 1] = 255; // g
+            local_image.pixels[pos + 2] = 255; // b
+            local_image.pixels[pos + 3] = 255; // a
+            pos += 4;
+          }
+        }
+        local_image.updatePixels();
+
 
         global_image.loadPixels();
-
-        let pos = 0;
+        pos = 0;
         for (let y = 0; y < H; y++) {
           for (let x = 0; x < W; x++) {
             let color = data.state[y][x];
