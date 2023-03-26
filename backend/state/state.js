@@ -1,14 +1,10 @@
-const fs = require('fs');
-const glob = require('glob');
+const fs = require("fs");
+const glob = require("glob");
+const events = require("../utils/events.js");
 
 let global_state = { width: 0, height: 0, state: [] };
 let state_revision = 0;
 
-var Pixel = function (color) {
-    return {
-        "color": color,
-    };
-};
 
 function removeOldBoardStateFiles() {
     let json_files = glob.globSync("./state/revisions/*.json");
@@ -45,11 +41,18 @@ function createGlobalState(width, height) {
     for (let y = 0; y < height; y++) {
         global_state.state[y] = [];
         for (var x = 0; x < width; x++) {
-            global_state.state[y][x] = Pixel("#000000");
+            global_state.state[y][x] = 000000;
         }
     }
 
     writeBoardStateToFile(global_state, 0);
+}
+
+function getDimensions() {
+    return {
+        width: global_state.width,
+        height: global_state.height
+    };
 }
 
 function rollbackToRevision(prev_revision) {
@@ -57,7 +60,7 @@ function rollbackToRevision(prev_revision) {
         return;
     }
 
-    console.log(`Rolling back to revision ${prev_revision}`)
+    console.log("Rolling back to revision", prev_revision)
 
     let modified_pixels = []
     let safe_state = fetchBoardStateFromFile(prev_revision);
@@ -76,10 +79,10 @@ function rollbackToRevision(prev_revision) {
             let problem_pixel = problem_state.state[y][x];
             let safe_pixel = safe_state.state[y][x];
             // Compare colors
-            if (safe_pixel.color !== problem_pixel.color) {
+            if (safe_pixel !== problem_pixel) {
                 // If they differ, push the safe color to the modified_pixels array
                 console.log(`Diff at x = ${x} and y = ${y}`)
-                modified_pixels.push({ x: x, y: y, color: safe_state.state[y][x].color })
+                modified_pixels.push({ x: x, y: y, color: safe_state.state[y][x] })
             }
         }
     }
@@ -99,14 +102,14 @@ function addNewRevision(changed_pixels, baseline_state) {
     // Increment the revision number
     state_revision++;
 
-    console.log(`Computing state ${state_revision}`)
+    console.log("Computing state", state_revision)
 
     for (update of changed_pixels) {
         let x = update.x;
         let y = update.y;
         let color = update.color;
 
-        console.log("Updating: ", { x: x, y: y, color: update.color });
+        console.log("Updating: ", { x: x, y: y, color: color });
 
         if (x < 0 || x > state_revision.width) {
             continue;
@@ -116,7 +119,7 @@ function addNewRevision(changed_pixels, baseline_state) {
         }
 
         // Change each necessary pixel in the baseline state
-        baseline_state.state[y][x].color = color;
+        baseline_state.state[y][x] = color;
     }
 
     // Commit this new state to a file
@@ -124,10 +127,16 @@ function addNewRevision(changed_pixels, baseline_state) {
 
     //Update the global state to match
     global_state = baseline_state;
+
+    events.emit("state_update");
+}
+
+function getCurrentState() {
+    return global_state;
 }
 
 function getCurrentRevision() {
     return state_revision;
 }
 
-module.exports = { createGlobalState, addNewRevision, rollbackToRevision, getCurrentRevision };
+module.exports = { createGlobalState, addNewRevision, rollbackToRevision, getCurrentRevision, getCurrentState, getDimensions };
