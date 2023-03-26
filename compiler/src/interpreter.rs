@@ -206,6 +206,15 @@ impl Interpreter {
                 self.current_inst += 1;
                 return Ok(Vec::new());
             }
+            Instruction::Begin { x, y } => {
+                if self.current_inst != 0 {
+                    return Err(
+                        "The 'begin' instruction must be the on very first line of your program."
+                            .to_string(),
+                    );
+                }
+                self.pos = Position { x: x.0, y: y.0 }
+            }
         }
 
         if self.pos == old_pos && !color_changed && modified.is_empty() {

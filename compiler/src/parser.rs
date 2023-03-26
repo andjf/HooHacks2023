@@ -38,8 +38,8 @@ pub fn parser<'input>(
     let right = movement!("right", Right);
     let turn = movement!("turn", Turn);
 
-    let pendown = just("pendown").to(Instruction::Pendown);
-    let penup = just("penup").to(Instruction::Pendown);
+    let pendown = just("pen_down").to(Instruction::Pendown);
+    let penup = just("pen_up").to(Instruction::Pendown);
 
     macro_rules! operator {
         ($op: literal, $variant:ident) => {
@@ -62,6 +62,13 @@ pub fn parser<'input>(
         .then_ignore(text::inline_whitespace())
         .then(constant)
         .map(|(var, val)| Instruction::Set { var, val });
+
+    let begin = just("begin")
+        .ignore_then(text::inline_whitespace())
+        .ignore_then(constant)
+        .then_ignore(text::inline_whitespace())
+        .then(constant)
+        .map(|(x, y)| Instruction::Begin { x, y });
 
     let random = just("random")
         .ignore_then(text::inline_whitespace())
@@ -91,7 +98,7 @@ pub fn parser<'input>(
 
     let instruction = choice((
         forward, backward, left, right, turn, pendown, penup, add, sub, mul, div, set, random,
-        color,
+        color, begin,
     ))
     .then_ignore(text::newline())
     .labelled("instruction");
