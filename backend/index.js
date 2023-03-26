@@ -3,6 +3,7 @@ const app = express();
 const expressWs = require("express-ws")(app);
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
+const cors = require("cors");
 
 const state = require("./state/state.js");
 const api_routes = require("./routes/api_routes.js");
@@ -13,6 +14,7 @@ dotenv.config()
 // Load in environment variables
 console.log(process.env)
 
+app.use(cors())
 app.use(bodyParser.json());
 app.use(
     bodyParser.urlencoded({
