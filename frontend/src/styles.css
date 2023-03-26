@@ -21,3 +21,7 @@
 .ansi-magenta {
     color: #b467ea;
 }
+
+.current-inst {
+    background-color: red !important;
+}

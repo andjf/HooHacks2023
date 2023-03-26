@@ -1,11 +1,10 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { trigger, style, animate, transition } from '@angular/animations';
-import { Doc, TextMarker } from 'codemirror';
 
 import * as Module from '../../assets/pkg/compiler';
-import { tick } from './Tick';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
+import { Doc, TextMarker } from 'codemirror';
 
 @Component({
   selector: 'app-editor',
@@ -13,7 +12,7 @@ import { CodemirrorComponent } from '@ctrl/ngx-codemirror';
   styleUrls: ['./editor.component.css'],
   animations: [
     trigger('outAnimation', [
-      transition(':leave', [animate('0.75s ease-in', style({ height: 0, opacity: 0 }))])
+      transition(':leave', [animate('0.5s ease-in', style({ height: 0, opacity: 0 }))])
     ])
   ]
 })
@@ -77,26 +76,19 @@ repeat sides:
       this.showRun = false;
       return;
     }
-
-    console.log(this.ticks);
     let tick = this.ticks[this.tickIndex];
-    this.lineHighlight = tick.Tick.line || tick.Changed.line || tick.Invalid.line;
+    this.lineHighlight = tick.Tick?.line || tick.Changed?.line || tick.Invalid?.line;
     if (this.lineHighlight) {
       const { doc } = this;
       if (doc) {
         // Clear markers
         this.marker?.clear();
-        this.marker = doc.markText({line: this.lineHighlight, ch: 0}, {line: this.lineHighlight, ch: 2}, {
+        this.marker = doc.markText({line: this.lineHighlight, ch: 0}, {line: this.lineHighlight, ch: 100}, {
           className: "current-inst",
         });
-        console.log(this.marker);
       }
     }
     this.tickIndex++;
-    //   const highlightLines = (editor, start, end) => {
-    //   const from: {line: start, ch: 0};
-    //   const to: {line: end, ch: MAX_LINE_LENGTH};
-    // }
   }
 
   stepAll() {
