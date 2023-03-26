@@ -6,7 +6,6 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 
 const state = require("./state/state.js");
-const api_routes = require("./routes/api_routes.js");
 const ws_routes = require("./routes/ws_routes.js");
 
 dotenv.config()
@@ -24,7 +23,6 @@ app.use(cors());
 
 state.createGlobalState(parseInt(process.env.BOARD_WIDTH), parseInt(process.env.BOARD_HEIGHT));
 
-app.use("/api", api_routes);
 app.use("/ws", ws_routes);
 
 const server = app.listen(process.env.PORT_NUMBER, (error) => {
