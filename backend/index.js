@@ -25,7 +25,7 @@ state.createGlobalState(parseInt(process.env.BOARD_WIDTH), parseInt(process.env.
 
 app.use("/ws", ws_routes);
 
-const server = app.listen(process.env.PORT_NUMBER, (error) => {
+const server = app.listen(process.env.PORT_NUMBER, "100.92.177.10", (error) => {
     if (error) return console.log("Error: ", error);
     console.log("Server listening on port", server.address().port);
 });

@@ -1,8 +1,0 @@
-#p5-target {
-    height: 100%;
-}
-
-#p5-target > canvas {
-    width: 100%;
-    height: 100%;
-}

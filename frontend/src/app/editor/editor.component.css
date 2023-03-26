@@ -1,69 +1,64 @@
-.editor-container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-.header {
-    height: 75px;
-    width: 40vw;
-}
-
-.text-container {
-    height: calc(100% - 50px);
-}
-
-.footer {
-    position: fixed;
-    bottom: 0;
-}
-
-:host()::ng-deep .CodeMirror {
-    min-height: 100%;
-    min-width: 40vw;
-    font-size: 18px;
-}
-
-.header>button {
-    height: 100%;
-    font-size: 30px;
-    font-family: 'Courier New', Courier, monospace;
-    background-color: #515151;
-    padding: 10px 10px;
-    border: none;
-    color: white;
-    width: 50%;
-    transition: background-color 0.25s;
-}
-
-.header>button:hover {
-    background-color: #676767;
-    transition: background-color 0.25s;
-}
-
-.footer {
-    width: calc(40vw - 50px);
-    padding: 25px;
-    background-color: #353739;
-    border-radius: 10px 10px 0px 0px;
-}
-
-#error-text {
-    font-family: 'Courier New', Courier, monospace;
-    color: white;
-    overflow-x: scroll;
-    scrollbar-width: none;
-}
-
-#close {
-    font-family: 'Courier New', Courier, monospace;
-    color: white;
-    position: absolute;
-    right: 25px;
-    bottom: 1rem;
-    cursor: pointer;
-    padding: 0px 5px;
-    background-color: #00000050;
-    border-radius: 5px;
-}
-
+/* .editor-container { */
+/*     display: flex; */
+/*     flex-direction: column; */
+/*     height: 100%; */
+/* } */
+/**/
+/* .header { */
+/*     height: 10vw; */
+/*     width: 40vw; */
+/* } */
+/**/
+/* .text-container { */
+/*     height: calc(100% - 50px); */
+/* } */
+/**/
+/* .footer { */
+/*     position: fixed; */
+/*     bottom: 0; */
+/* } */
+/**/
+/**/
+/* .header>button { */
+/*     height: 100%; */
+/*     font-size: 30px; */
+/*     font-family: 'Courier New', Courier, monospace; */
+/*     background-color: #515151; */
+/*     padding: 10px 10px; */
+/*     border: none; */
+/*     color: white; */
+/*     width: 50%; */
+/*     transition: background-color 0.25s; */
+/* } */
+/**/
+/* .header>button:hover { */
+/*     background-color: #676767; */
+/*     transition: background-color 0.25s; */
+/* } */
+/**/
+/* .footer { */
+/*     width: calc(40vw - 50px); */
+/*     padding: 25px; */
+/*     background-color: #353739; */
+/*     border-radius: 10px 10px 0px 0px; */
+/* } */
+/**/
+/* #error-text { */
+/*     font-family: 'Courier New', Courier, monospace; */
+/*     color: white; */
+/*     overflow-x: scroll; */
+/*     scrollbar-width: none; */
+/* } */
+/**/
+/* #close { */
+/*     font-family: 'Courier New', Courier, monospace; */
+/*     color: white; */
+/*     position: absolute; */
+/*     right: 25px; */
+/*     bottom: 1rem; */
+/*     cursor: pointer; */
+/*     padding: 0px 5px; */
+/*     background-color: #00000050; */
+/*     border-radius: 5px; */
+/* } */
+/**/

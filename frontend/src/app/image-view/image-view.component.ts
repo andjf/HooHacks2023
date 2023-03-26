@@ -10,7 +10,13 @@ export class ImageViewComponent implements OnInit, OnDestroy {
 
   private p5: any;
 
+  @Input() width?: number;
+  @Input() height?: number;
   @Input() socket?: WebSocket;
+
+  constructor() {
+    console.log('Analog-constructed');
+  }
 
   ngOnInit() {
     console.log('image-view init');
@@ -25,6 +31,7 @@ export class ImageViewComponent implements OnInit, OnDestroy {
   private createCanvas = () => {
     console.log('creating canvas');
     this.p5 = new p5(this.drawing);
+    this.p5.connectWebsocket(this.socket);
   }
 
   private destroyCanvas = () => {
@@ -32,7 +39,7 @@ export class ImageViewComponent implements OnInit, OnDestroy {
     this.p5.noCanvas();
   }
 
-  private drawing = function (p: p5) {
+  drawing (p: p5) {
     let image: p5.Image;
     let centerX: number;
     let centerY: number;
@@ -48,30 +55,68 @@ export class ImageViewComponent implements OnInit, OnDestroy {
     let leftPressed: boolean;
     let rightPressed: boolean;
 
-    const getState = () => {
-      p.httpGet("http://localhost:3000/api/state", "json", false, (resp) => {
-        // console.log(resp);
-        const W = resp.state.width;
-        const H = resp.state.height;
-        console.log(H, W);
 
-        image.loadPixels();
-
-        let pos = 0;
-        for (let y = 0; y < H; y++) {
-          for (let x = 0; x < W; x++) {
-            let color = resp.state.state[y][x];
-            image.pixels[pos + 0] = (color & 0xFF0000); // r
-            image.pixels[pos + 1] = (color & 0x00FF00); // g
-            image.pixels[pos + 2] = (color & 0x0000FF); // b
-            image.pixels[pos + 3] = 255; // a
-            pos += 4;
-          }
+    // @ts-ignore
+    p5.prototype.connectWebsocket = function(socket: any) {
+      socket.addEventListener("message", (event: any) => {
+        let data = event.data;
+        if (data.message !== "success") {
+          return;
         }
-
-        image.updatePixels();
+        console.log(data);
+        // data = data.data;
+        //
+        // const W = data.width;
+        // const H = data.height;
+        // console.log(H, W);
+        //
+        // image.loadPixels();
+        //
+        // let pos = 0;
+        // for (let y = 0; y < H; y++) {
+        //   for (let x = 0; x < W; x++) {
+        //     let color = data.state[y][x];
+        //     image.pixels[pos + 0] = (color & 0xFF0000); // r
+        //     image.pixels[pos + 1] = (color & 0x00FF00); // g
+        //     image.pixels[pos + 2] = (color & 0x0000FF); // b
+        //     image.pixels[pos + 3] = 255; // a
+        //     pos += 4;
+        //   }
+        // }
+        //
+        // image.updatePixels();
       });
-    };
+
+      socket.addEventListener("open", () => {
+        console.log("sending get_update");
+        socket.send(JSON.stringify({message: "get_update", data: ""}));
+      });
+    }
+
+    // const getState = () => {
+    //   p.httpGet("http://localhost:3000/api/state", "json", false, (resp) => {
+    //     // console.log(resp);
+    //     const W = resp.state.width;
+    //     const H = resp.state.height;
+    //     console.log(H, W);
+    //
+    //     image.loadPixels();
+    //
+    //     let pos = 0;
+    //     for (let y = 0; y < H; y++) {
+    //       for (let x = 0; x < W; x++) {
+    //         let color = resp.state.state[y][x];
+    //         image.pixels[pos + 0] = (color & 0xFF0000); // r
+    //         image.pixels[pos + 1] = (color & 0x00FF00); // g
+    //         image.pixels[pos + 2] = (color & 0x0000FF); // b
+    //         image.pixels[pos + 3] = 255; // a
+    //         pos += 4;
+    //       }
+    //     }
+    //
+    //     image.updatePixels();
+    //   });
+    // };
 
     p.setup = () => {
       const parent = document.getElementById('p5-target');
@@ -86,27 +131,20 @@ export class ImageViewComponent implements OnInit, OnDestroy {
       const rect: DOMRect = parent.getBoundingClientRect();
       const W = Math.floor(rect.width);
       const H = Math.floor(rect.height);
-      p.createCanvas(W, H).parent('p5-target');
+      let renderer = p.createCanvas(W, H);
+      renderer.elt.width = parent.clientWidth;
+      renderer.elt.height = parent.clientHeight;
+
+      renderer.parent('p5-target');
 
       image = p.createImage(1000, 1000);
 
-      getState();
+      // getState();
 
       centerX = Math.floor(W / 2);
       centerY = Math.floor(H / 2);
 
       p.noSmooth();
-
-      const socket = new WebSocket("ws://localhost:3000/ws/notification");
-
-      socket.addEventListener("open", (event) => {
-        socket.send("Hello Server!");
-      });
-
-      socket.addEventListener("message", (event) => {
-        getState();
-        console.log("Message from server ", event.data);
-      });
     };
 
     p.draw = () => {
