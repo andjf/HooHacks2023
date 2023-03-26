@@ -54,24 +54,33 @@ repeat sides:
   showRun: boolean = false;
   marker: null | TextMarker = null;
   updates: Set<any> = new Set();
+  wasError: boolean = false;
 
   lineFormatter(line: string): string {
     return `${line} `;
   }
 
   submitClicked() {
-    this.ticks = this.rust?.compile_and_execute(this.content, { x: 50, y: 50 }, 1000, 1000);
-    this.tickIndex = 0;
-    this.stepAll();
+    try {
+      this.closeErrorMessage();
+      this.showRun = false;
+      this.updates = new Set();
+      this.ticks = this.rust?.compile_and_execute(this.content, { x: 50, y: 50 }, 1000, 1000);
+      this.tickIndex = 0;
+      this.wasError = false;
+      if (this.stepAll()) {
+          let data: any[] = [];
+          this.updates.forEach((val) => {
+            data.push(val);
+          });
+          this.socket?.send(JSON.stringify({ message: "post_update", data: data }));
+      }
 
-    let data: any[] = [];
-    this.updates.forEach((val) => {
-      data.push(val);
-    });
-    console.log(data);
-    this.socket?.send(JSON.stringify({ message: "post_update", data: data }));
-
-    this.updates = new Set();
+      this.updates = new Set();
+    }
+    catch (error: any) {
+      this.raiseError(error.toString());
+    }
   }
 
   runClicked() {
@@ -81,6 +90,7 @@ repeat sides:
       this.ticks = this.rust?.compile_and_execute(this.content, { x: 50, y: 50 }, 1000, 1000);
       this.tickIndex = 0;
       this.showRun = true;
+      this.wasError = false;
       this.step();
     }
     catch (error: any) {
@@ -118,6 +128,7 @@ repeat sides:
     if (tick.Invalid) {
       this.raiseError(tick.Invalid.message);
       this.showRun = false;
+      this.wasError = true;
       return false;
     }
     else if (tick.Changed) {
@@ -133,6 +144,7 @@ repeat sides:
 
   stepAll() {
     while (this.step()) { }
+    return !this.wasError;
   }
 
   get doc() {
