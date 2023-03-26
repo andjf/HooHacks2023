@@ -55,7 +55,7 @@ app-image-view {
 }
 
 .current-inst {
-    background-color: red !important;
+    background-color: #619EEF45 !important;
 }
 
 .editor-container {
@@ -86,8 +86,6 @@ app-image-view {
 .CodeMirror {
     height: 90%;
     font-size: 1.2rem;
-    padding-left: 1rem;
-    padding-top: 1rem;
 }
 
 .cm-s-mdn-like.CodeMirror {
@@ -99,5 +97,28 @@ app-image-view {
 }
 
 .cm-s-mdn-like .CodeMirror-gutters {
-    border-left: 6px solid rgba(0,83,159,0.75);
+    border-left: 6px solid #619EEF;
+    background-color: #619EEF10 !important;
+}
+
+.visualize-buttons {
+    position: relative;
+    bottom: 9%;
+    left: 10%;
+    display: flex;
+    gap: 1rem;
+}
+.visualize-buttons > button {
+   margin-bottom: 1rem;
+   background-color: #B3CB8D;
+   border: 0;
+   box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+   cursor: pointer;
+   font-size: 1.2rem;
+   display: flex;
+   justify-content: center;
+}
+
+.visualize-buttons > button > svg {
+    transform: scale(0.6);
 }
