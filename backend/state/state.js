@@ -42,7 +42,7 @@ function createGlobalState(width, height) {
         global_state.state[y] = [];
         for (var x = 0; x < width; x++) {
             // Initialize each pixel to black (#000000)
-            global_state.state[y][x] = 0x000000;
+            global_state.state[y][x] = 0xFFFFFF;
         }
     }
 

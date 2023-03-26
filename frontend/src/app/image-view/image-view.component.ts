@@ -48,6 +48,31 @@ export class ImageViewComponent implements OnInit, OnDestroy {
     let leftPressed: boolean;
     let rightPressed: boolean;
 
+    const getState = () => {
+      p.httpGet("http://localhost:3000/api/state", "json", false, (resp) => {
+        console.log(resp);
+        const W = resp.state.width;
+        const H = resp.state.height;
+        console.log(H, W);
+
+        image.loadPixels();
+
+        let pos = 0;
+        for (let y = 0; y < H; y++) {
+          for (let x = 0; x < W; x++) {
+            let color = resp.state.state[y][x];
+            image.pixels[pos + 0] = (color & 0xFF0000); // r
+            image.pixels[pos + 1] = (color & 0x00FF00); // g
+            image.pixels[pos + 2] = (color & 0x0000FF); // b
+            image.pixels[pos + 3] = 255; // a
+            pos += 4;
+          }
+        }
+
+        image.updatePixels();
+      });
+    };
+
     p.setup = () => {
       const parent = document.getElementById('p5-target');
       if (!parent)
@@ -63,18 +88,9 @@ export class ImageViewComponent implements OnInit, OnDestroy {
       const H = Math.floor(rect.height);
       p.createCanvas(W, H).parent('p5-target');
 
-      image = p.createImage(W, H);
-      image.loadPixels();
-      for (let y = 0; y < H * 4; y++) {
-        for (let x = 0; x < W * 4; x++) {
-          let pos = (y * W + x) * 4;
-          image.pixels[pos + 0] = p.random(256); // r
-          image.pixels[pos + 1] = p.random(256); // g
-          image.pixels[pos + 2] = p.random(256); // b
-          image.pixels[pos + 3] = 255; // a
-        }
-      }
-      image.updatePixels();
+      image = p.createImage(1000, 1000);
+
+      getState();
 
       centerX = Math.floor(W / 2);
       centerY = H;
