@@ -23,10 +23,6 @@ app.use(
 app.use(cors());
 
 state.createGlobalState(parseInt(process.env.BOARD_WIDTH), parseInt(process.env.BOARD_HEIGHT));
-//state.addNewRevision([{ x: 0, y: 0, color: 0xFFBBCC }], null);
-//state.addNewRevision([{ x: 1, y: 0, color: 0xDD0000 }, { x: 3, y: 2, color: 0x212343 }], null);
-//state.rollbackToRevision(1);
-//console.log(state.getCurrentRevision())
 
 app.use("/api", api_routes);
 app.use("/ws", ws_routes);
