@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { trigger, style, animate, transition } from '@angular/animations';
 
 import * as Module from '../../assets/pkg/compiler';
@@ -28,6 +28,9 @@ repeat sides:
   forward side_length
   turn turn_amount
 `;
+
+  @Input() width?: number;
+  @Input() height?: number;
 
   private rust?: typeof Module;
 

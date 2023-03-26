@@ -1,5 +1,5 @@
 import * as p5 from 'p5';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-image-view',
@@ -9,6 +9,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 export class ImageViewComponent implements OnInit, OnDestroy {
 
   private p5: any;
+
+  @Input() width?: number;
+  @Input() height?: number;
 
   constructor() {
     console.log('Analog-constructed');
